@@ -1,4 +1,4 @@
-Version 2.23: 
+Version 2.24:
 * Hard-fork of legacy S3 Torrent Tornado
 * Remove built-in ad network
 * Fix branding
