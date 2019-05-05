@@ -1,13 +1,13 @@
 this.EXPORTED_SYMBOLS = [ "HTTPTracker" ];
 
-var s3torrent = {};
-Components.utils.import("resource://s3torrent/utils.js", s3torrent);
-Components.utils.import("resource://s3torrent/bencode.js", s3torrent);
+var magdown = {};
+Components.utils.import("resource://magdown/utils.js", magdown);
+Components.utils.import("resource://magdown/bencode.js", magdown);
 
 //-----------------------------------------------------------------------------------
-s3torrent.HTTPTracker = function(torrent, url) {
+magdown.HTTPTracker = function(torrent, url) {
 	this.url = url;
-	this.parsedUrl = s3torrent.utils.parse_uri(this.url);
+	this.parsedUrl = magdown.utils.parse_uri(this.url);
 	this.host = this.parsedUrl.host;
 	this.port = parseInt(this.parsedUrl.port) || 80;
 	this.torrent = torrent;
@@ -22,10 +22,10 @@ s3torrent.HTTPTracker = function(torrent, url) {
 	this.event = 'started';
 }
 
-this.HTTPTracker = s3torrent.HTTPTracker;
+this.HTTPTracker = magdown.HTTPTracker;
 
 //-----------------------------------------------------------------------------------
-s3torrent.HTTPTracker.prototype = {
+magdown.HTTPTracker.prototype = {
 	//-----------------------------------------------------------------------------
 	on_timeout : function() {
 		if (this.callback) { this.callback(false, this, this.torrent); }
@@ -34,7 +34,7 @@ s3torrent.HTTPTracker.prototype = {
 	announce: function(event, callback) {
 		this.event = event || 'started';
 		this.callback = callback;
-		var peeridbytes = s3torrent.utils.get_peerid_bytes();
+		var peeridbytes = magdown.utils.get_peerid_bytes();
 		var _this = this;
 
 		var data = {
@@ -42,7 +42,7 @@ s3torrent.HTTPTracker.prototype = {
 			downloaded: this.torrent.metadata.downloaded,
 			uploaded: this.torrent.metadata.uploaded,
 			compact: 1,
-			peer_id: s3torrent.utils.ui82str(peeridbytes),
+			peer_id: magdown.utils.ui82str(peeridbytes),
 			port: 6889, // some trackers complain when we send 0 and dont give a response
 			left: this.torrent.metadata.total_size - this.torrent.metadata.downloaded,
 			numwant: 200,
@@ -56,10 +56,10 @@ s3torrent.HTTPTracker.prototype = {
 
 		var url = this.url;
 		url += (url.indexOf('?') == -1) ? '?' : '&';
-		url = url + 'info_hash=' + s3torrent.utils.urlencode(s3torrent.utils.ui82str(this.torrent.metadata.hashbytes));
+		url = url + 'info_hash=' + magdown.utils.urlencode(magdown.utils.ui82str(this.torrent.metadata.hashbytes));
 
 		for (var key of data_sort) {
-			url = url + '&' + key + '=' + s3torrent.utils.urlencode(data[key]);
+			url = url + '&' + key + '=' + magdown.utils.urlencode(data[key]);
 		}
 		try {
 			xhr.open("GET", url, true);
@@ -68,26 +68,33 @@ s3torrent.HTTPTracker.prototype = {
 			return;
 		}
 		xhr.timeout = 10000;
-		xhr.channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_BYPASS_CACHE;
+		if (xhr.channel) {
+			xhr.channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_BYPASS_CACHE;
+		}
 		xhr.responseType = "arraybuffer";
 		xhr.onload = function(evt) {
-			s3torrent.utils.clearTimeout( _this.timeout_id );
+			magdown.utils.clearTimeout( _this.timeout_id );
 			_this.on_announce_response(evt.target.response);
 		}
 		xhr.onerror = function(evt) {
-			s3torrent.utils.clearTimeout( _this.timeout_id );
+			magdown.utils.clearTimeout( _this.timeout_id );
 			if (_this.callback) { _this.callback(false, _this, _this.torrent); }
 		};
 
 		xhr.setRequestHeader('User-Agent', 'BitComet/1.37.12.31');
-		this.timeout_id = s3torrent.utils.setTimeout(function() { _this.on_timeout(); }, 10000);
-		xhr.send(null);
+		this.timeout_id = magdown.utils.setTimeout(function() { _this.on_timeout(); }, 10000);
+		try {
+			xhr.send(null);
+		} catch(e) {
+			magdown.utils.clearTimeout( _this.timeout_id );
+			magdown.utils.setTimeout(function() { _this.announce(event, callback); }, 5000);
+		}
 	},
 	//-----------------------------------------------------------------------------
 	on_announce_response: function(resp) {
-		s3torrent.utils.clearTimeout( this.timeout_id );
+		magdown.utils.clearTimeout( this.timeout_id );
 		try {
-			var data = s3torrent.bencode.decode(s3torrent.utils.ui82str(new Uint8Array(resp)));
+			var data = magdown.bencode.decode(magdown.utils.ui82str(new Uint8Array(resp)));
 			this.req_interval = data['min interval'] || data['interval'] || 60;
 			var peer_list = [];
 			if (data.peers && typeof data.peers == 'object') {
@@ -96,7 +103,7 @@ s3torrent.HTTPTracker.prototype = {
 				peer_list = this.addCompactPeerBuffer(data.peers);
 			} else {
 				if (data['failure reason']) {
-	//				app.createNotification({details:"HTTP Tracker error, reason given: \"" + data['failure reason'] + '\". If this is a private torrent, please contact the site administrator and ask them if they can unblock s3torrent',
+	//				app.createNotification({details:"HTTP Tracker error, reason given: \"" + data['failure reason'] + '\". If this is a private torrent, please contact the site administrator and ask them if they can unblock magdown',
 	//					priority:2})
 				}
 				if (this.callback) { this.callback(false, this, this.torrent); }

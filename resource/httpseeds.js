@@ -3,12 +3,12 @@
 
 this.EXPORTED_SYMBOLS = [ "HTTPSeeds" ];
 
-var s3torrent = {};
-Components.utils.import("resource://s3torrent/utils.js", s3torrent);
-Components.utils.import("resource://s3torrent/bencode.js", s3torrent);
+var magdown = {};
+Components.utils.import("resource://magdown/utils.js", magdown);
+Components.utils.import("resource://magdown/bencode.js", magdown);
 
 //-----------------------------------------------------------------------------------
-s3torrent.HTTPSeeds = function(torrent, url_list, protocol, callback) {
+magdown.HTTPSeeds = function(torrent, url_list, protocol, callback) {
 	this.url_list = url_list;
 	this.torrent = torrent;
 	this.protocol = protocol;
@@ -29,17 +29,17 @@ s3torrent.HTTPSeeds = function(torrent, url_list, protocol, callback) {
 	}
 }
 
-this.HTTPSeeds = s3torrent.HTTPSeeds;
+this.HTTPSeeds = magdown.HTTPSeeds;
 
 //-----------------------------------------------------------------------------------
-s3torrent.HTTPSeeds.prototype = {
+magdown.HTTPSeeds.prototype = {
 	//-----------------------------------------------------------------------------
 	on_timeout : function() {
 		this.connect_close(false);
 	},
 	//-----------------------------------------------------------------------------
 	get_info : function() {
-		[ this.download_speed, this.download_speed_data ] = s3torrent.utils.calculate_speed(this.download_speed_data);
+		[ this.download_speed, this.download_speed_data ] = magdown.utils.calculate_speed(this.download_speed_data);
 
 		var info = {
 			'peer_ip_port' : this.host + ':' + this.port,
@@ -58,7 +58,7 @@ s3torrent.HTTPSeeds.prototype = {
 		if (this.timeout_id) {
 			try {
 			} catch(e) {
-				s3torrent.utils.clearTimeout( this.timeout_id );
+				magdown.utils.clearTimeout( this.timeout_id );
 			}
 		}
 		this.is_work = false;
@@ -101,12 +101,12 @@ s3torrent.HTTPSeeds.prototype = {
 
 		var url = this.url_list[Math.floor(Math.random()*this.url_list.length)];
 
-		var parsedUrl = s3torrent.utils.parse_uri(url);
+		var parsedUrl = magdown.utils.parse_uri(url);
 		this.host = parsedUrl.host;
 		this.port = parseInt(parsedUrl.port) || 80;
 
 		url += (url.indexOf('?') == -1) ? '?' : '&';
-		url += 'info_hash=' + s3torrent.utils.urlencode(s3torrent.utils.ui82str(this.torrent.metadata.hashbytes));
+		url += 'info_hash=' + magdown.utils.urlencode(magdown.utils.ui82str(this.torrent.metadata.hashbytes));
 		url += '&piece=' + result.piece_id;
 		url += '&ranges=' + result.chunk_offset + '-' + ranges_end;
 
@@ -117,10 +117,12 @@ s3torrent.HTTPSeeds.prototype = {
 			return;
 		}
 		xhr.timeout = 10000;
-		xhr.channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_BYPASS_CACHE;
+		if (xhr.channel) {
+			xhr.channel.loadFlags |= Components.interfaces.nsIRequest.LOAD_BYPASS_CACHE;
+		}
 		xhr.responseType = "arraybuffer";
 		xhr.onload = function(evt) {
-			s3torrent.utils.clearTimeout( _this.timeout_id );
+			magdown.utils.clearTimeout( _this.timeout_id );
 			_this.on_response(evt.target.response, result.piece_id, result.chunk_offset);
 		}
 		xhr.onerror = function(evt) {
@@ -141,14 +143,14 @@ s3torrent.HTTPSeeds.prototype = {
 //		xhr.setRequestHeader('Content-Range', 'bytes ' + range + '-' + (range + result.chunk_size - 1) + '/' + (range + result.chunk_size));
 		xhr.setRequestHeader('Range', 'bytes='  + range + '-' + (range + result.chunk_size - 1)); // the bytes (incl.) you request
 
-		this.timeout_id = s3torrent.utils.setTimeout(function() { _this.connect_close(false) }, 10000);
+		this.timeout_id = magdown.utils.setTimeout(function() { _this.connect_close(false) }, 10000);
 		this.request_count++;
 		this.piece_download[result.piece_id + '-' + result.chunk_offset] = result;
 		xhr.send(null);
 	},
 	//-----------------------------------------------------------------------------
 	on_response: function(payload, piece_id, chunk_offset) {
-		s3torrent.utils.clearTimeout( this.timeout_id );
+		magdown.utils.clearTimeout( this.timeout_id );
 	        var data = new Uint8Array(payload);
 		var is_done = false;
 
@@ -157,7 +159,7 @@ s3torrent.HTTPSeeds.prototype = {
 		if ((result && result.chunk_size == data.byteLength)) {
 			result.end_time = new Date().getTime();
 			var download_time = result.end_time - result.start_time;
-			[ this.download_speed, this.download_speed_data ] = s3torrent.utils.calculate_speed(this.download_speed_data, result);
+			[ this.download_speed, this.download_speed_data ] = magdown.utils.calculate_speed(this.download_speed_data, result);
 			is_done = true;
 		} else {
 			data = null;

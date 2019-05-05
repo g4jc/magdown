@@ -1,0 +1,37 @@
+<?xml version="1.0"?>  
+<?xml-stylesheet href="chrome://magdown/skin/magdown.css" type="text/css"?>
+<!DOCTYPE overlay SYSTEM "chrome://magdown/locale/magdown.dtd">
+<overlay id="magdown" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+	<script type="application/x-javascript" src="chrome://magdown/content/magdown.js"/>
+
+	<keyset>
+		<key id="magdown_open_torrent_toolsmenu_key" key="H" modifiers="alt,shift" oncommand="magdown.open_download_window();"/>
+	</keyset>
+
+	<popupset>
+		<menupopup id="magdown_main_button_menu">
+			<menuitem id="magdown_open_DL_history" class="menuitem-iconic" label="&open.torrent.history.label;" oncommand="magdown.open_download_window();" key="magdown_open_torrent_toolsmenu_key"/>
+			<menuseparator/>
+			<menuitem id="magdown_resume_all" class="menuitem-iconic" label="&cmd.resume.all.label;" oncommand="magdown.set_resume_all();"/>
+			<menuitem id="magdown_stop_all" class="menuitem-iconic" label="&cmd.stop.all.label;" oncommand="magdown.set_stop_all();"/>
+			<menuseparator/>
+			<menuitem id="magdown_add_new_torrent" class="menuitem-iconic" label="&add.new.torrent.label;" oncommand="magdown.utils.add_new_torrent();"/>
+			<menuitem id="magdown_open_options" class="menuitem-iconic" label="&settings.label;" oncommand="magdown.open_options_window();"/>
+		</menupopup>
+	</popupset>
+
+	<toolbarpalette id="BrowserToolbarPalette">
+		<toolbarbutton id="magdown_toolbar_button" class="toolbarbutton-1" 
+			onclick="magdown.open_download_window(event);" 
+			ondragenter="magdown.drag_check(event);" ondragover="magdown.drag_check(event);"
+			ondrop="magdown.drop_on(event);" ondragleave="magdown.drag_leave(event);"
+			tooltiptext="&title.label;" label="&title.label;" context="magdown_main_button_menu">
+			<hbox align="center" id="magdown_toolbar_button_box" class="toolbarbutton-icon">
+				<image id="magdown_toolbar_button_image"/>
+				<label id="magdown_toolbar_button_text" value="0:0"/>
+			</hbox>
+		</toolbarbutton>
+	</toolbarpalette>
+
+</overlay>

@@ -1,4 +1,10 @@
-updated: Hungarian locale (thanks Balogh Béla)
+Version 2.23: 
+* Hard-fork of legacy S3 Torrent Tornado
+* Remove built-in ad network
+* Fix branding
+* Set GUID for UXP applications
+
+---
 fixed: minor bug fixes
 
 ---

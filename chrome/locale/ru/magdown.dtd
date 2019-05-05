@@ -1,0 +1,91 @@
+<!ENTITY title.label "Torrent Tornado">
+<!ENTITY open.torrent.history.label "История загрузок">
+<!ENTITY settings.label "Настройки">
+<!ENTITY add.new.torrent.label "Добавить новый торрент">
+
+<!ENTITY new.torrent.selector.url.label "URL (http, ftp, magnet) или Хэш">
+<!ENTITY new.torrent.selector.file.label "Файл">
+<!ENTITY new.torrent.selector.file.open.label "Открыть файл">
+<!ENTITY new.torrent.selector.file.list.label "Список файлов">
+<!ENTITY new.torrent.next.step.label "Следующий шаг">
+<!ENTITY new.torrent.prev.step.label "Предыдущий шаг">
+<!ENTITY new.torrent.skip.step.label "Старт!">
+<!ENTITY new.torrent.skip.step.later.label "Скачать позже">
+<!ENTITY new.torrent.privacywarn1.label "Предупреждение: MagDown не использует зашифрованные соединения и может обойти прокси.">
+<!ENTITY new.torrent.privacywarn2.label " Пожалуйста, рассмотрите возможность использования VPN.">
+
+<!ENTITY cmd.stop.all.label "Остановить все загрузки">
+<!ENTITY cmd.resume.all.label "Возобновить все загрузки">
+<!ENTITY cmd.cancel.all.label "Отменить все текущие загрузки">
+<!ENTITY cmd.remove.all.label "Удалить все законченные загрузки">
+
+<!ENTITY cmd.pause.label "Приостановить">
+<!ENTITY cmd.resume.label "Возобновить">
+<!ENTITY cmd.cancel.label "Отменить">
+<!ENTITY cmd.show.label "Открыть папку с файлом">
+<!ENTITY cmd.retry.label "Повторить">
+<!ENTITY cmd.goToDownloadPage.label "Перейти на страницу загрузки">
+<!ENTITY cmd.copyDownloadLink.label "Копировать ссылку на загрузку">
+<!ENTITY cmd.removeFromHistory.label "Удалить из истории">
+<!ENTITY cmd.select.all.label "Выделить всё">
+<!ENTITY cmd.delete.label "Удалить из системы">
+<!ENTITY cmd.open.label "Открыть">
+<!ENTITY cmd.copy.label "Копировать">
+<!ENTITY cmd.trackers.label "Изменить трекеры">
+<!ENTITY cmd.save.metadata.label "Сохранить метаданные торрент-файла">
+
+<!ENTITY fromTip.label "Откуда:">
+<!ENTITY toTip.label "Куда:">
+<!ENTITY sizeTip.label "Размер файла:">
+<!ENTITY percentTip.label "Процент загрузки:">
+<!ENTITY avgSpeedTip.label "Средняя скорость:">
+<!ENTITY timeTip.label "Осталось времени:">
+
+<!ENTITY downloadsLibrary.TorrentName.label "Название">
+<!ENTITY downloadsLibrary.SaveDir.label "Каталог сохранения">
+<!ENTITY downloadsLibrary.Size.label "Размер">
+<!ENTITY downloadsLibrary.DateTime.label "Дата">
+<!ENTITY downloadsLibrary.URL.label "URL">
+<!ENTITY downloadsLibrary.Progress.label "Прогресс">
+<!ENTITY downloadsLibrary.TimeRemaining.label "Осталось времени">
+<!ENTITY downloadsLibrary.Peers.label "Пиры">
+<!ENTITY downloadsLibrary.Speed.label "Скорость">
+<!ENTITY downloadsLibrary.Percent.label "&#037;">
+<!ENTITY downloadsLibrary.Info.label "Общая информация">
+
+<!ENTITY downloadsLibrary.TorrentInfo.Files.label "Файлы">
+<!ENTITY downloadsLibrary.TorrentInfo.FileName.label "Имя файла">
+<!ENTITY downloadsLibrary.TorrentInfo.Address.label "Адрес">
+<!ENTITY downloadsLibrary.TorrentInfo.Client.label "Клиент">
+<!ENTITY downloadsLibrary.TorrentInfo.MagnetLink.label "Magnet-ссылка">
+<!ENTITY downloadsLibrary.TorrentInfo.FilesCount.label "Количество файлов">
+<!ENTITY downloadsLibrary.TorrentInfo.Hash.label "Хэш">
+<!ENTITY downloadsLibrary.TorrentInfo.Publisher.label "Издатель">
+<!ENTITY downloadsLibrary.TorrentInfo.PublisherUrl.label "Издатель (ссылка)">
+<!ENTITY downloadsLibrary.TorrentInfo.Created.label "Создан">
+<!ENTITY downloadsLibrary.TorrentInfo.Comment.label "Комментарий">
+<!ENTITY downloadsLibrary.TorrentInfo.Error.label "Ошибка">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadPage.label "Страница загрузки">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadLink.label "Ссылка на загрузку">
+<!ENTITY downloadsLibrary.TorrentInfo.Trackers.label "Трекеры">
+
+<!ENTITY pShowButtons.label "Отображать следующие кнопки:">
+<!ENTITY pSwitchDownloadsTab.label "Переключиться на вкладку загрузок в начале загрузки">
+<!ENTITY pDateTimeFormat.label "Формат даты:">
+<!ENTITY pDefaultSaveDir.label "Папка для сохранения по умолчанию:">
+<!ENTITY pDefaultSelectDir.label "Обзор">
+<!ENTITY pDefaultSaveDirReset.label "Сбросить">
+<!ENTITY pMaximumNumberPeers.label "Максимальное количество пиров (максимум 500):">
+<!ENTITY pMagnetURIassociation.label "Ассоциация c magnet-ссылками">
+<!ENTITY pTorrentFileTypeAssociation.label "Ассоциация с .torrent файлами">
+<!ENTITY pDataMaxBuffer.label "Максимальный размер буфера памяти:">
+<!ENTITY pDataMaxBufferMB.label "MB">
+<!ENTITY pQuicklyStartDownload.label "Быстро начать закачку (начать закачку пропустив все шаги мастера)">
+<!ENTITY pShowCounterToolbarbutton.label "Отображать счетчик на кнопке тулбара">
+<!ENTITY pDisableNotifications.label "Отключить уведомления">
+<!ENTITY pSpeedLimitAll.label "Максимальная скорость скачивания (общая):">
+<!ENTITY pSpeedLimitOne.label "Максимальная скорость скачивания (отдельный торрент):">
+<!ENTITY pSpeedLimitDescription.label "* чем меньше значение, тем больше погрешность; 0 = безлимит">
+<!ENTITY pSpeedLimitAbbr.label "Кб/сек">
+
+<!ENTITY pGeneralTab.label "Основное">

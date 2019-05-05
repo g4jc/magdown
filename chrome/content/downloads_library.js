@@ -1,112 +1,112 @@
 
-var s3torrent = {};
-Components.utils.import("resource://s3torrent/utils.js", s3torrent);
+var magdown = {};
+Components.utils.import("resource://magdown/utils.js", magdown);
 
-s3torrent.prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.s3torrent.");
-s3torrent.prefs_global = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
-s3torrent.draw_box = { start_x:0, start_y:0, start_draw: false };
-s3torrent.sort_handler = null;
-s3torrent.sort_handler_count = 0;
-s3torrent.new_items_list = [];
-s3torrent.new_items_list_handler = null;
-s3torrent.remove_items_list = [];
-s3torrent.remove_items_list_handler = null;
+magdown.prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.magdown.");
+magdown.prefs_global = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefBranch);
+magdown.draw_box = { start_x:0, start_y:0, start_draw: false };
+magdown.sort_handler = null;
+magdown.sort_handler_count = 0;
+magdown.new_items_list = [];
+magdown.new_items_list_handler = null;
+magdown.remove_items_list = [];
+magdown.remove_items_list_handler = null;
 
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-s3torrent.init = function() {
-	var S3TorrentTornado_class = Components.classes["@s3torrent.com/tornado;1"];
+magdown.init = function() {
+	var S3TorrentTornado_class = Components.classes["@magdown.com/tornado;1"];
 	var S3TorrentTornado = S3TorrentTornado_class.getService().wrappedJSObject;
-	s3torrent.torrent = S3TorrentTornado.torrent;
+	magdown.torrent = S3TorrentTornado.torrent;
 
-	setTimeout(function(){ s3torrent.init_run(); } , 100);
+	setTimeout(function(){ magdown.init_run(); } , 100);
 }
 //------------------------------------------------------------------------------
-s3torrent.close = function() {
-	s3torrent.unregister();
+magdown.close = function() {
+	magdown.unregister();
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-s3torrent.observe = function(subject, topic, s3torrent_id) {
-	if (topic == "s3torrent-change") {
-		var torrent = s3torrent.torrent.doCommand(s3torrent_id, 'get_torrent_data');
+magdown.observe = function(subject, topic, magdown_id) {
+	if (topic == "magdown-change") {
+		var torrent = magdown.torrent.doCommand(magdown_id, 'get_torrent_data');
 		if (torrent) {
-			s3torrent.event_changed(torrent.metadata);
+			magdown.event_changed(torrent.metadata);
 		}
 	}
-	else if (topic == "s3torrent-remove") {
-		s3torrent.remove_items_list.push(s3torrent_id);
-		if (s3torrent.remove_items_list_handler != null) {
-			clearTimeout(s3torrent.remove_items_list_handler);
+	else if (topic == "magdown-remove") {
+		magdown.remove_items_list.push(magdown_id);
+		if (magdown.remove_items_list_handler != null) {
+			clearTimeout(magdown.remove_items_list_handler);
 		}
-		s3torrent.remove_items_list_handler = setTimeout(function(){ s3torrent.event_removed(); } , 100);
+		magdown.remove_items_list_handler = setTimeout(function(){ magdown.event_removed(); } , 100);
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.register = function() { 
+magdown.register = function() { 
 	var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
-	observerService.addObserver(s3torrent, "s3torrent-change", false);
-	observerService.addObserver(s3torrent, "s3torrent-remove", false);
+	observerService.addObserver(magdown, "magdown-change", false);
+	observerService.addObserver(magdown, "magdown-remove", false);
 }
 //------------------------------------------------------------------------------
-s3torrent.unregister = function() {
+magdown.unregister = function() {
 	try {
 		var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
-		observerService.removeObserver(s3torrent, "s3torrent-change");
-		observerService.removeObserver(s3torrent, "s3torrent-remove");
+		observerService.removeObserver(magdown, "magdown-change");
+		observerService.removeObserver(magdown, "magdown-remove");
 	} catch(e) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.init_run = function() {
-	s3torrent.tree = document.getElementById('s3torrent_tree');
-	s3torrent.tree.view = s3torrent.treeView;
+magdown.init_run = function() {
+	magdown.tree = document.getElementById('magdown_tree');
+	magdown.tree.view = magdown.treeView;
 	//------------------------------------------------------------------------
-	var pref_branch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.s3torrent.");
+	var pref_branch = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.magdown.");
 
 	//------------------------------------------------------------------------
-	document.getElementById('s3torrent_button_add_torrent').hidden = ! pref_branch.getBoolPref('DL.showAddNewTorrent');
-	document.getElementById('s3torrent_button_pause_all').hidden = ! pref_branch.getBoolPref('DL.showPauseButton');
-	document.getElementById('s3torrent_button_resume_all').hidden = ! pref_branch.getBoolPref('DL.showResumeButton');
-	document.getElementById('s3torrent_button_cancel_all').hidden = ! pref_branch.getBoolPref('DL.showCancelButton');
-	document.getElementById('s3torrent_button_remove_all').hidden = ! pref_branch.getBoolPref('DL.showRemoveButton');
+	document.getElementById('magdown_button_add_torrent').hidden = ! pref_branch.getBoolPref('DL.showAddNewTorrent');
+	document.getElementById('magdown_button_pause_all').hidden = ! pref_branch.getBoolPref('DL.showPauseButton');
+	document.getElementById('magdown_button_resume_all').hidden = ! pref_branch.getBoolPref('DL.showResumeButton');
+	document.getElementById('magdown_button_cancel_all').hidden = ! pref_branch.getBoolPref('DL.showCancelButton');
+	document.getElementById('magdown_button_remove_all').hidden = ! pref_branch.getBoolPref('DL.showRemoveButton');
 
 	//------------------------------------------------------------------------
-	s3torrent.dateTime_format = pref_branch.getCharPref('DL.dateTimeFormat');
+	magdown.dateTime_format = pref_branch.getCharPref('DL.dateTimeFormat');
 
 	//------------------------------------------------------------------------
-	s3torrent.count_summary();
-	s3torrent.register();
+	magdown.count_summary();
+	magdown.register();
 
 
-	var torrent_id_list = s3torrent.torrent.doCommand('all', 'get_torrent_id_list');
+	var torrent_id_list = magdown.torrent.doCommand('all', 'get_torrent_id_list');
 	//------------------------------------------------------------------------
-	for(var s3torrent_id in torrent_id_list) {
-		var torrent = s3torrent.torrent.doCommand(s3torrent_id, 'get_torrent_data');
-		s3torrent.new_items_list.push(torrent.metadata);
-		if (s3torrent.new_items_list_handler != null) {
-			clearTimeout(s3torrent.new_items_list_handler);
+	for(var magdown_id in torrent_id_list) {
+		var torrent = magdown.torrent.doCommand(magdown_id, 'get_torrent_data');
+		magdown.new_items_list.push(torrent.metadata);
+		if (magdown.new_items_list_handler != null) {
+			clearTimeout(magdown.new_items_list_handler);
 		}
-		s3torrent.new_items_list_handler = setTimeout(function(){ s3torrent.event_added(); } , 100);
+		magdown.new_items_list_handler = setTimeout(function(){ magdown.event_added(); } , 100);
 	}
 
 	//------------------------------------------------------------------------
-	var treecols = s3torrent.tree.getElementsByTagName("treecol");
+	var treecols = magdown.tree.getElementsByTagName("treecol");
 	for (var treecol of treecols) {
 		if (treecol.getAttribute("sortActive")) {
-			s3torrent.treeView.sortName = treecol.id;
-			s3torrent.treeView.sortDirection = treecol.getAttribute("sortDirection");
+			magdown.treeView.sortName = treecol.id;
+			magdown.treeView.sortDirection = treecol.getAttribute("sortDirection");
 		}
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.event_added = function() {
+magdown.event_added = function() {
 	var count_new = 0;
 	var new_items = [];
-	while (s3torrent.new_items_list.length > 0) {
-		var metadata = s3torrent.new_items_list.shift();
-		var aDownload = s3torrent.create_aDownload(metadata);
-		var res = s3torrent.get_row_download(aDownload.s3id);
+	while (magdown.new_items_list.length > 0) {
+		var metadata = magdown.new_items_list.shift();
+		var aDownload = magdown.create_aDownload(metadata);
+		var res = magdown.get_row_download(aDownload.s3id);
 		if (res.row < 0) {
 			new_items.push(aDownload);
 			if (aDownload.isView) {
@@ -114,64 +114,64 @@ s3torrent.event_added = function() {
 			}
 		}
 	}
-	s3torrent.treeView.download_list = s3torrent.treeView.download_list.concat(new_items);
+	magdown.treeView.download_list = magdown.treeView.download_list.concat(new_items);
 	if (count_new > 0) {
-		s3torrent.treeView.tree.rowCountChanged(0, count_new);
-		s3torrent.treeView.rowCount += count_new;
-		s3torrent.treeView.sortElements();
+		magdown.treeView.tree.rowCountChanged(0, count_new);
+		magdown.treeView.rowCount += count_new;
+		magdown.treeView.sortElements();
 
-		if (! document.getElementById('s3torrent_info').current_torrent_id) {
-			s3torrent.treeView.selection.currentIndex = 0;
-			s3torrent.torrent_info_show(s3torrent.get_download(0), true);
+		if (! document.getElementById('magdown_info').current_torrent_id) {
+			magdown.treeView.selection.currentIndex = 0;
+			magdown.torrent_info_show(magdown.get_download(0), true);
 		}
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.event_removed = function() {
+magdown.event_removed = function() {
 	var count_remove = 0;
-	while (s3torrent.remove_items_list.length > 0) {
-		var s3id = s3torrent.remove_items_list.shift();
-		s3torrent.torrent_info_remove(s3id);
-		var res = s3torrent.get_row_download(s3id);
+	while (magdown.remove_items_list.length > 0) {
+		var s3id = magdown.remove_items_list.shift();
+		magdown.torrent_info_remove(s3id);
+		var res = magdown.get_row_download(s3id);
 		if (res.row >= 0) {
 			if (res.row_tree >= 0) {
 				count_remove++;
 			}
-			s3torrent.treeView.download_list.splice(res.row, 1);
+			magdown.treeView.download_list.splice(res.row, 1);
 		}
 	}
 	if (count_remove > 0) {
-		s3torrent.treeView.tree.rowCountChanged(s3torrent.treeView.rowCount, count_remove * (-1));
-		s3torrent.treeView.rowCount -= count_remove;
-		s3torrent.treeView.sortElements();
+		magdown.treeView.tree.rowCountChanged(magdown.treeView.rowCount, count_remove * (-1));
+		magdown.treeView.rowCount -= count_remove;
+		magdown.treeView.sortElements();
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.event_changed = function(metadata) {
-	var aDownload = s3torrent.create_aDownload(metadata);
-	s3torrent.torrent_info_show(aDownload);
-	var res = s3torrent.get_row_download(aDownload.s3id);
+magdown.event_changed = function(metadata) {
+	var aDownload = magdown.create_aDownload(metadata);
+	magdown.torrent_info_show(aDownload);
+	var res = magdown.get_row_download(aDownload.s3id);
 	if (res.row >= 0) {
-		s3torrent.treeView.download_list.splice(res.row, 1, aDownload);
-		s3torrent.treeView.change_data(res.row_tree);
+		magdown.treeView.download_list.splice(res.row, 1, aDownload);
+		magdown.treeView.change_data(res.row_tree);
 	} else {
-		s3torrent.treeView.insert_data(aDownload);
+		magdown.treeView.insert_data(aDownload);
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.create_aDownload = function(metadata) {
-	var s3torrent_id = metadata.s3torrent_id;
-	var total_size = s3torrent.torrent.doCommand(s3torrent_id, 'get_total_size');
-	var downloaded_size = s3torrent.torrent.doCommand(s3torrent_id, 'get_downloaded_size');
+magdown.create_aDownload = function(metadata) {
+	var magdown_id = metadata.magdown_id;
+	var total_size = magdown.torrent.doCommand(magdown_id, 'get_total_size');
+	var downloaded_size = magdown.torrent.doCommand(magdown_id, 'get_downloaded_size');
 
 	// --------------------------
 	var aDownload = {
-		s3id : s3torrent_id,
+		s3id : magdown_id,
 		s3_metaData : {
 			displayName : metadata.info.name,
-			downloadUri : metadata.torrent_url || s3torrent.torrent.doCommand(s3torrent_id, 'get_magnet_link'),
+			downloadUri : metadata.torrent_url || magdown.torrent.doCommand(magdown_id, 'get_magnet_link'),
 			referrerUri : metadata.referrer_url,
-			magnetUri : s3torrent.torrent.doCommand(s3torrent_id, 'get_magnet_link'),
+			magnetUri : magdown.torrent.doCommand(magdown_id, 'get_magnet_link'),
 			percentComplete : (total_size > 0) ? Math.ceil(downloaded_size * 100 / total_size) : 100,
 			timeRemaining : 0,
 			timeRemainingText : '--.--',
@@ -187,7 +187,7 @@ s3torrent.create_aDownload = function(metadata) {
 			endTime : metadata.end_time
 		},
 		doCommand : function(cmd, params) {
-			return s3torrent.torrent.doCommand(s3torrent_id, cmd, params);
+			return magdown.torrent.doCommand(magdown_id, cmd, params);
 		}
 	}
 
@@ -195,30 +195,30 @@ s3torrent.create_aDownload = function(metadata) {
 	aDownload.s3_metaData.speed = (aDownload.s3_metaData.paused || ! aDownload.s3_metaData.inProgress) ? 0 : aDownload.s3_metaData.speed;
 	if (aDownload.s3_metaData.speed > 0) {
 		aDownload.s3_metaData.timeRemaining = (1 / aDownload.s3_metaData.speed) * (aDownload.s3_metaData.fileSize - aDownload.s3_metaData.curSize);
-		aDownload.s3_metaData.timeRemainingText = s3torrent.utils.format_seconds(aDownload.s3_metaData.timeRemaining);
+		aDownload.s3_metaData.timeRemainingText = magdown.utils.format_seconds(aDownload.s3_metaData.timeRemaining);
 	}
 	// --------------------------
-	aDownload.isView = s3torrent.check_download_filter(aDownload, s3torrent.treeView.filterText);
-	aDownload.s3_metaData.curSizeString = s3torrent.utils.get_strings_to_KB_MB_GB(aDownload.s3_metaData.curSize);
-	aDownload.s3_metaData.fileSizeString = s3torrent.utils.get_strings_to_KB_MB_GB(aDownload.s3_metaData.fileSize);
+	aDownload.isView = magdown.check_download_filter(aDownload, magdown.treeView.filterText);
+	aDownload.s3_metaData.curSizeString = magdown.utils.get_strings_to_KB_MB_GB(aDownload.s3_metaData.curSize);
+	aDownload.s3_metaData.fileSizeString = magdown.utils.get_strings_to_KB_MB_GB(aDownload.s3_metaData.fileSize);
 
 	//-----------------------------------------------------------------------
 	aDownload.s3_metaData.speedText = '';
-	aDownload.s3_metaData.speedText = s3torrent.utils.get_strings_to_KB_MB_GB(aDownload.s3_metaData.speed, true);
+	aDownload.s3_metaData.speedText = magdown.utils.get_strings_to_KB_MB_GB(aDownload.s3_metaData.speed, true);
 
 	//-----------------------------------------------------------------------
-	[aDownload.s3_metaData.peerCountAll, aDownload.s3_metaData.peerCountWork] = s3torrent.torrent.doCommand(s3torrent_id, 'get_peer_count');
+	[aDownload.s3_metaData.peerCountAll, aDownload.s3_metaData.peerCountWork] = magdown.torrent.doCommand(magdown_id, 'get_peer_count');
 
 
 	return aDownload;
 }
 //------------------------------------------------------------------------------
-s3torrent.get_row_download = function(s3id) {
+magdown.get_row_download = function(s3id) {
 	var row_tree = -1;
 	var result = { 'row': -1, 'row_tree': -1 };
 	//-----------------------------------------------------------------------
-	for (var row in s3torrent.treeView.download_list) {
-		var d = s3torrent.treeView.download_list[row];
+	for (var row in magdown.treeView.download_list) {
+		var d = magdown.treeView.download_list[row];
 		if (d.isView) {
 			row_tree++;
 		}
@@ -230,9 +230,9 @@ s3torrent.get_row_download = function(s3id) {
 	return result;
 }
 //------------------------------------------------------------------------------
-s3torrent.get_download_metaData = function(row) {
+magdown.get_download_metaData = function(row) {
 	var search_row = -1;
-	for (var d of s3torrent.treeView.download_list) {
+	for (var d of magdown.treeView.download_list) {
 		if (d.isView) {
 			search_row++;
 		}
@@ -243,9 +243,9 @@ s3torrent.get_download_metaData = function(row) {
 	return false;
 }
 //------------------------------------------------------------------------------
-s3torrent.get_download = function(row) {
+magdown.get_download = function(row) {
 	var search_row = -1;
-	for (var d of s3torrent.treeView.download_list) {
+	for (var d of magdown.treeView.download_list) {
 		if (d.isView) {
 			search_row++;
 		}
@@ -256,8 +256,8 @@ s3torrent.get_download = function(row) {
 	return false;
 }
 //------------------------------------------------------------------------------
-s3torrent.get_download_by_s3id = function(s3id) {
-	for (var d of s3torrent.treeView.download_list) {
+magdown.get_download_by_s3id = function(s3id) {
+	for (var d of magdown.treeView.download_list) {
 		if (d.s3id == s3id) {
 			return d;
 		}
@@ -265,7 +265,7 @@ s3torrent.get_download_by_s3id = function(s3id) {
 	return false;
 }
 //------------------------------------------------------------------------------
-s3torrent.check_download_filter = function(aDownload, filter_text) {
+magdown.check_download_filter = function(aDownload, filter_text) {
 	var result = false;
 
 	if (aDownload.s3_metaData.displayName.toLowerCase().indexOf(filter_text) >= 0) { result = true; }
@@ -273,7 +273,7 @@ s3torrent.check_download_filter = function(aDownload, filter_text) {
 	return result;
 }
 //------------------------------------------------------------------------------
-s3torrent.count_summary = function() {
+magdown.count_summary = function() {
 	var progress_count = 0;
 	var downloads_all = 0;
 	var percentComplete = 0;
@@ -284,7 +284,7 @@ s3torrent.count_summary = function() {
 	var pause_count = 0;
 
 	//-----------------------------------------------------------------------
-	for (var aDownload of s3torrent.treeView.download_list) {
+	for (var aDownload of magdown.treeView.download_list) {
 		if (aDownload.isView) {
 			downloads_all++;
 			if (! aDownload.s3_metaData.done) {
@@ -311,39 +311,39 @@ s3torrent.count_summary = function() {
 	var done_count = downloads_all - progress_count;
 	//-----------------------------------------------------------------------
 	percentComplete = ((progress_count-cancel_count) > 0) ? Math.ceil(percentComplete / (progress_count-cancel_count)) : 0;
-	document.getElementById('s3torrent_summary_text').value = progress_count + '/' + done_count;
-	document.getElementById('s3torrent_summary_progress').value = Math.ceil(percentComplete);
+	document.getElementById('magdown_summary_text').value = progress_count + '/' + done_count;
+	document.getElementById('magdown_summary_progress').value = Math.ceil(percentComplete);
 
 	//-----------------------------------------------------------------------
 	if ((percentComplete == 0) && ((progress_count-cancel_count) <= 0)) {
 		percentComplete = 100;
 	}
-	var timeRemainingText = (timeRemaining > 0) ? ' :: ' + s3torrent.utils.format_seconds(timeRemaining) : '';
+	var timeRemainingText = (timeRemaining > 0) ? ' :: ' + magdown.utils.format_seconds(timeRemaining) : '';
 	//-----------------------------------------------------------------------
-	var speedText = ' :: ' + s3torrent.utils.get_strings_to_KB_MB_GB(speedMax, true);
-	document.getElementById('s3torrent_summary_progress_text').value = percentComplete + '%' + timeRemainingText + speedText;
+	var speedText = ' :: ' + magdown.utils.get_strings_to_KB_MB_GB(speedMax, true);
+	document.getElementById('magdown_summary_progress_text').value = percentComplete + '%' + timeRemainingText + speedText;
 
 	//-----------------------------------------------------------------------
-	var s3torrent_button_pause_all = document.getElementById('s3torrent_button_pause_all');
-	s3torrent_button_pause_all.disabled = (progress_count - (pause_count+cancel_count)) > 0 ? false : true;
-	s3torrent_button_pause_all.label = s3torrent_button_pause_all.getAttribute("label_pre") + ((progress_count - (pause_count+cancel_count)) > 0 ? ' (' + (progress_count - (pause_count+cancel_count)) + ')' : '');
+	var magdown_button_pause_all = document.getElementById('magdown_button_pause_all');
+	magdown_button_pause_all.disabled = (progress_count - (pause_count+cancel_count)) > 0 ? false : true;
+	magdown_button_pause_all.label = magdown_button_pause_all.getAttribute("label_pre") + ((progress_count - (pause_count+cancel_count)) > 0 ? ' (' + (progress_count - (pause_count+cancel_count)) + ')' : '');
 
-	var s3torrent_button_resume_all = document.getElementById('s3torrent_button_resume_all');
-	s3torrent_button_resume_all.disabled = ((pause_count + cancel_count) > 0) ? false : true;
-	s3torrent_button_resume_all.label = s3torrent_button_resume_all.getAttribute("label_pre") + (((pause_count + cancel_count) > 0) ? ' (' + (pause_count + cancel_count) + ')' : '');
+	var magdown_button_resume_all = document.getElementById('magdown_button_resume_all');
+	magdown_button_resume_all.disabled = ((pause_count + cancel_count) > 0) ? false : true;
+	magdown_button_resume_all.label = magdown_button_resume_all.getAttribute("label_pre") + (((pause_count + cancel_count) > 0) ? ' (' + (pause_count + cancel_count) + ')' : '');
 
-	var s3torrent_button_cancel_all = document.getElementById('s3torrent_button_cancel_all');
-	s3torrent_button_cancel_all.disabled = ((progress_count - cancel_count) > 0) ? false : true;
-	s3torrent_button_cancel_all.label = s3torrent_button_cancel_all.getAttribute("label_pre") + (((progress_count-cancel_count)>0) ? ' (' + (progress_count-cancel_count) + ')' : '');
+	var magdown_button_cancel_all = document.getElementById('magdown_button_cancel_all');
+	magdown_button_cancel_all.disabled = ((progress_count - cancel_count) > 0) ? false : true;
+	magdown_button_cancel_all.label = magdown_button_cancel_all.getAttribute("label_pre") + (((progress_count-cancel_count)>0) ? ' (' + (progress_count-cancel_count) + ')' : '');
 
-	var s3torrent_button_remove_all = document.getElementById('s3torrent_button_remove_all');
-	s3torrent_button_remove_all.disabled = (done_count > 0) ? false : true;
-	s3torrent_button_remove_all.label = s3torrent_button_remove_all.getAttribute("label_pre") + ((done_count>0) ? ' (' + done_count + ')' : '');
+	var magdown_button_remove_all = document.getElementById('magdown_button_remove_all');
+	magdown_button_remove_all.disabled = (done_count > 0) ? false : true;
+	magdown_button_remove_all.label = magdown_button_remove_all.getAttribute("label_pre") + ((done_count>0) ? ' (' + done_count + ')' : '');
 }
 //------------------------------------------------------------------------------
-s3torrent.check_menupopup = function(event) {
+magdown.check_menupopup = function(event) {
 	if (event.explicitOriginalTarget._lastSelectedRow < 0) {
-		s3torrent.treeView.selection.clearSelection();
+		magdown.treeView.selection.clearSelection();
 		return false;
 	}
 
@@ -356,7 +356,7 @@ s3torrent.check_menupopup = function(event) {
 	var fileSizeCount = 0;
 	var cancel_count = 0;
 	var referrerUri_count = 0;
-	var selectionHash = s3torrent.treeView.selectionGet();
+	var selectionHash = magdown.treeView.selectionGet();
 	var downloads_count = 0;
 	//-----------------------------------------------------------------------
 	for (var s3id in selectionHash) {
@@ -384,7 +384,7 @@ s3torrent.check_menupopup = function(event) {
 		}
 	}
 	//-----------------------------------------------------------------------
-	for (var aDownload of s3torrent.treeView.download_list) {
+	for (var aDownload of magdown.treeView.download_list) {
 		if (aDownload.isView && (aDownload.s3_metaData.done || (! aDownload.s3_metaData.inProgress))) {
 			downloads_count++;
 		}
@@ -395,68 +395,68 @@ s3torrent.check_menupopup = function(event) {
 		return false;
 	}
 	//-----------------------------------------------------------------------
-	var s3torrent_pause = document.getElementById('s3torrent_pause');
-	s3torrent_pause.hidden = (progress_count > 0) ? false : true;
-	s3torrent_pause.disabled = ((pause_count+cancel_count) == progress_count) ? true : false;
-	s3torrent_pause.label = s3torrent_pause.getAttribute("label_pre") + (((progress_count - (pause_count+cancel_count))>1) || (select_count > 1) ? ' (' + (progress_count - (pause_count+cancel_count)) + ')' : '');
+	var magdown_pause = document.getElementById('magdown_pause');
+	magdown_pause.hidden = (progress_count > 0) ? false : true;
+	magdown_pause.disabled = ((pause_count+cancel_count) == progress_count) ? true : false;
+	magdown_pause.label = magdown_pause.getAttribute("label_pre") + (((progress_count - (pause_count+cancel_count))>1) || (select_count > 1) ? ' (' + (progress_count - (pause_count+cancel_count)) + ')' : '');
 	//-----------------------------------------------------------------------
-	var s3torrent_resume = document.getElementById('s3torrent_resume');
-	s3torrent_resume.hidden = (progress_count > 0) ? false : true;
-	s3torrent_resume.disabled = ((pause_count + cancel_count) > 0) ? false : true;
-	s3torrent_resume.label = s3torrent_resume.getAttribute("label_pre") + (((pause_count + cancel_count) > 1) || (select_count > 1) ? ' (' + (pause_count + cancel_count) + ')' : '');
+	var magdown_resume = document.getElementById('magdown_resume');
+	magdown_resume.hidden = (progress_count > 0) ? false : true;
+	magdown_resume.disabled = ((pause_count + cancel_count) > 0) ? false : true;
+	magdown_resume.label = magdown_resume.getAttribute("label_pre") + (((pause_count + cancel_count) > 1) || (select_count > 1) ? ' (' + (pause_count + cancel_count) + ')' : '');
 	//-----------------------------------------------------------------------
-	var s3torrent_cancel = document.getElementById('s3torrent_cancel');
-	s3torrent_cancel.hidden = (progress_count > 0) ? false : true;
-	s3torrent_cancel.disabled = (cancel_count > 0) ? true : false;
-	s3torrent_cancel.label = s3torrent_cancel.getAttribute("label_pre") + (((progress_count-cancel_count)>1) || (select_count > 1) ? ' (' + (progress_count-cancel_count) + ')' : '');
+	var magdown_cancel = document.getElementById('magdown_cancel');
+	magdown_cancel.hidden = (progress_count > 0) ? false : true;
+	magdown_cancel.disabled = (cancel_count > 0) ? true : false;
+	magdown_cancel.label = magdown_cancel.getAttribute("label_pre") + (((progress_count-cancel_count)>1) || (select_count > 1) ? ' (' + (progress_count-cancel_count) + ')' : '');
 	//-----------------------------------------------------------------------
-	var s3torrent_retry = document.getElementById('s3torrent_retry');
-	s3torrent_retry.hidden = ((done_count + pause_count + cancel_count) > 0) ? false : true;
-	s3torrent_retry.disabled = ((done_count + pause_count + cancel_count) > 0) ? false : true;
-	s3torrent_retry.label = s3torrent_retry.getAttribute("label_pre") + (((done_count + pause_count + cancel_count) > 1) || (select_count > 1) ? ' (' + (done_count + pause_count + cancel_count) + ')' : '');
+	var magdown_retry = document.getElementById('magdown_retry');
+	magdown_retry.hidden = ((done_count + pause_count + cancel_count) > 0) ? false : true;
+	magdown_retry.disabled = ((done_count + pause_count + cancel_count) > 0) ? false : true;
+	magdown_retry.label = magdown_retry.getAttribute("label_pre") + (((done_count + pause_count + cancel_count) > 1) || (select_count > 1) ? ' (' + (done_count + pause_count + cancel_count) + ')' : '');
 	//-----------------------------------------------------------------------
-	var s3torrent_trackers = document.getElementById('s3torrent_trackers');
-	s3torrent_trackers.hidden = (select_count == 1) ? false : true;
-	s3torrent_trackers.disabled = ((done_count + pause_count + cancel_count) > 0) ? false : true;
+	var magdown_trackers = document.getElementById('magdown_trackers');
+	magdown_trackers.hidden = (select_count == 1) ? false : true;
+	magdown_trackers.disabled = ((done_count + pause_count + cancel_count) > 0) ? false : true;
 	//-----------------------------------------------------------------------
-	var s3torrent_copy_link = document.getElementById('s3torrent_copy_link');
-	s3torrent_copy_link.label = s3torrent_copy_link.getAttribute("label_pre") + (select_count>1 ? ' (' + select_count + ')' : '');
+	var magdown_copy_link = document.getElementById('magdown_copy_link');
+	magdown_copy_link.label = magdown_copy_link.getAttribute("label_pre") + (select_count>1 ? ' (' + select_count + ')' : '');
 	//-----------------------------------------------------------------------
-	var s3torrent_download_page = document.getElementById('s3torrent_download_page');
-	s3torrent_download_page.disabled = (referrerUri_count > 0) ? false : true;
-	s3torrent_download_page.label = s3torrent_download_page.getAttribute("label_pre") + (select_count>1 ? ' (' + referrerUri_count + ')' : '');
+	var magdown_download_page = document.getElementById('magdown_download_page');
+	magdown_download_page.disabled = (referrerUri_count > 0) ? false : true;
+	magdown_download_page.label = magdown_download_page.getAttribute("label_pre") + (select_count>1 ? ' (' + referrerUri_count + ')' : '');
 	//-----------------------------------------------------------------------
-	var s3torrent_remove_history = document.getElementById('s3torrent_remove_history');
-	s3torrent_remove_history.hidden = ((done_count+cancel_count) > 0) ? false : true;
-	s3torrent_remove_history.label = s3torrent_remove_history.getAttribute("label_pre") + (((done_count+cancel_count)>1) || (select_count > 1) ? ' (' + (done_count+cancel_count) + ')' : '');
+	var magdown_remove_history = document.getElementById('magdown_remove_history');
+	magdown_remove_history.hidden = ((done_count+cancel_count) > 0) ? false : true;
+	magdown_remove_history.label = magdown_remove_history.getAttribute("label_pre") + (((done_count+cancel_count)>1) || (select_count > 1) ? ' (' + (done_count+cancel_count) + ')' : '');
 	//-----------------------------------------------------------------------
-	var s3torrent_delete_file = document.getElementById('s3torrent_delete_file');
-	s3torrent_delete_file.hidden = (done_count > 0) ? false : true;
-	s3torrent_delete_file.label = s3torrent_delete_file.getAttribute("label_pre") + ((done_count>1) || (select_count > 1) ? ' (' + fileSizeCount + ')' : '');
-	s3torrent_delete_file.disabled = (fileSizeMax >= 0) ? false : true;
+	var magdown_delete_file = document.getElementById('magdown_delete_file');
+	magdown_delete_file.hidden = (done_count > 0) ? false : true;
+	magdown_delete_file.label = magdown_delete_file.getAttribute("label_pre") + ((done_count>1) || (select_count > 1) ? ' (' + fileSizeCount + ')' : '');
+	magdown_delete_file.disabled = (fileSizeMax >= 0) ? false : true;
 	//-----------------------------------------------------------------------
-	var s3torrent_open_file = document.getElementById('s3torrent_open_file');
-	s3torrent_open_file.hidden = ((select_count == 1) && done_count > 0) ? false : true;
-	s3torrent_open_file.disabled = (fileSizeMax >= 0) ? false : true;
+	var magdown_open_file = document.getElementById('magdown_open_file');
+	magdown_open_file.hidden = ((select_count == 1) && done_count > 0) ? false : true;
+	magdown_open_file.disabled = (fileSizeMax >= 0) ? false : true;
 	//-----------------------------------------------------------------------
-	var s3torrent_show_dir = document.getElementById('s3torrent_show_dir');
-//	s3torrent_show_dir.hidden = ((select_count == 1) && done_count > 0) ? false : true;
-//	s3torrent_show_dir.disabled = (fileSizeMax >= 0) ? false : true;
-	s3torrent_show_dir.hidden = (select_count == 1)  ? false : true;
-	s3torrent_show_dir.disabled = false;
+	var magdown_show_dir = document.getElementById('magdown_show_dir');
+//	magdown_show_dir.hidden = ((select_count == 1) && done_count > 0) ? false : true;
+//	magdown_show_dir.disabled = (fileSizeMax >= 0) ? false : true;
+	magdown_show_dir.hidden = (select_count == 1)  ? false : true;
+	magdown_show_dir.disabled = false;
 
 	//-----------------------------------------------------------------------
-	var s3torrent_save_metadata = document.getElementById('s3torrent_save_metadata');
-	s3torrent_save_metadata.label = s3torrent_save_metadata.getAttribute("label_pre") + (select_count>1 ? ' (' + select_count + ')' : '');
+	var magdown_save_metadata = document.getElementById('magdown_save_metadata');
+	magdown_save_metadata.label = magdown_save_metadata.getAttribute("label_pre") + (select_count>1 ? ' (' + select_count + ')' : '');
 
 	//-----------------------------------------------------------------------
-	document.getElementById('s3torrent_menuseparator_1').hidden = (s3torrent_pause.hidden && s3torrent_resume.hidden && s3torrent_cancel.hidden && s3torrent_retry.hidden && s3torrent_trackers.hidden) ? true : false;
-	document.getElementById('s3torrent_menuseparator_2').hidden = (s3torrent_remove_history.hidden && s3torrent_delete_file.hidden) ? true : false;
-	document.getElementById('s3torrent_menuseparator_3').hidden = (s3torrent_open_file.hidden && s3torrent_show_dir.hidden) ? true : false;
+	document.getElementById('magdown_menuseparator_1').hidden = (magdown_pause.hidden && magdown_resume.hidden && magdown_cancel.hidden && magdown_retry.hidden && magdown_trackers.hidden) ? true : false;
+	document.getElementById('magdown_menuseparator_2').hidden = (magdown_remove_history.hidden && magdown_delete_file.hidden) ? true : false;
+	document.getElementById('magdown_menuseparator_3').hidden = (magdown_open_file.hidden && magdown_show_dir.hidden) ? true : false;
 }
 //------------------------------------------------------------------------------
-s3torrent.action = function(action) {
-	var selectionHash = s3torrent.treeView.selectionGet();
+magdown.action = function(action) {
+	var selectionHash = magdown.treeView.selectionGet();
 	//-----------------------------------------------------------------------
 	if (action == 'pause') {
 		for (var s3id in selectionHash) {
@@ -485,11 +485,11 @@ s3torrent.action = function(action) {
 		//----------------------------------------------------------------
 		if (count == 0) { return false; }
 		//----------------------------------------------------------------
-		var s3torrent_cancel = document.getElementById('s3torrent_cancel');
-		var message = s3torrent_cancel.getAttribute("label_pre") + ' (' + count + ')';
+		var magdown_cancel = document.getElementById('magdown_cancel');
+		var message = magdown_cancel.getAttribute("label_pre") + ' (' + count + ')';
 		//----------------------------------------------------------------
-		var s3torrent_confirmMsg = s3torrent.utils.get_string("areYouSureConfirm");
-		if (! s3torrent.utils.confirm(message + "\n" + s3torrent_confirmMsg)) {
+		var magdown_confirmMsg = magdown.utils.get_string("areYouSureConfirm");
+		if (! magdown.utils.confirm(message + "\n" + magdown_confirmMsg)) {
 			return;
 		}
 		//----------------------------------------------------------------
@@ -502,19 +502,19 @@ s3torrent.action = function(action) {
 	//-----------------------------------------------------------------------
 	else if (action == 'retry') {
 		//----------------------------------------------------------------
-		var s3torrent_confirmMsg = s3torrent.utils.get_string("areYouSureConfirm");
-		if (! s3torrent.utils.confirm(s3torrent_confirmMsg)) {
+		var magdown_confirmMsg = magdown.utils.get_string("areYouSureConfirm");
+		if (! magdown.utils.confirm(magdown_confirmMsg)) {
 			return;
 		}
 		//----------------------------------------------------------------
-		var selection_count = s3torrent.treeView.selection.count;
+		var selection_count = magdown.treeView.selection.count;
 		for (var s3id in selectionHash) {
 			var aDownload = selectionHash[s3id];
 			if (aDownload.s3_metaData.done || aDownload.s3_metaData.paused) {
 				var file_path = aDownload.s3_metaData.saveDir;
 				var run_process = true;
 				var is_promt = (selection_count > 1) ? false : true;
-				var localDir = s3torrent.utils.get_localFile_dir(file_path);
+				var localDir = magdown.utils.get_localFile_dir(file_path);
 				if (! localDir) {
 					is_promt = true;
 				}
@@ -525,7 +525,7 @@ s3torrent.action = function(action) {
 
 					//-------------------------------------------------
 					if (! localDir) {
-						localDir = s3torrent.utils.get_default_save_dir();
+						localDir = magdown.utils.get_default_save_dir();
 					}
 					//-------------------------------------------------
 					if (localDir) {
@@ -550,9 +550,9 @@ s3torrent.action = function(action) {
 	}
 	//-----------------------------------------------------------------------
 	else if (action == 'trackers') {
-		var aDownload = s3torrent.get_download(s3torrent.treeView.selection.currentIndex);
+		var aDownload = magdown.get_download(magdown.treeView.selection.currentIndex);
 		var tracker_list = aDownload.doCommand('get_tracker_list');
-		var winD = window.openDialog('chrome://s3torrent/content/change_tracker.xul', 's3torrent_change_tracker', 'chrome,modal,centerscreen,toolbar', tracker_list);
+		var winD = window.openDialog('chrome://magdown/content/change_tracker.xul', 'magdown_change_tracker', 'chrome,modal,centerscreen,toolbar', tracker_list);
 		if (winD.result && winD.result.is_ok) {
 			aDownload.doCommand('set_tracker_list', { 'tracker_list' : winD.result.tracker_list });
 		}
@@ -589,11 +589,11 @@ s3torrent.action = function(action) {
 		//----------------------------------------------------------------
 		if (count == 0) { return false; }
 		//----------------------------------------------------------------
-		var s3torrent_remove_history = document.getElementById('s3torrent_remove_history');
-		var message = s3torrent_remove_history.getAttribute("label_pre") + ' (' + count + ')';
+		var magdown_remove_history = document.getElementById('magdown_remove_history');
+		var message = magdown_remove_history.getAttribute("label_pre") + ' (' + count + ')';
 		//----------------------------------------------------------------
-		var s3torrent_confirmMsg = s3torrent.utils.get_string("areYouSureConfirm");
-		if (! s3torrent.utils.confirm(message + "\n" + s3torrent_confirmMsg)) {
+		var magdown_confirmMsg = magdown.utils.get_string("areYouSureConfirm");
+		if (! magdown.utils.confirm(message + "\n" + magdown_confirmMsg)) {
 			return;
 		}
 		//----------------------------------------------------------------
@@ -617,11 +617,11 @@ s3torrent.action = function(action) {
 		//----------------------------------------------------------------
 		if (count == 0) { return false; }
 		//----------------------------------------------------------------
-		var s3torrent_delete_file = document.getElementById('s3torrent_delete_file');
-		var message = s3torrent_delete_file.getAttribute("label_pre") + ' (' + count + ')';
+		var magdown_delete_file = document.getElementById('magdown_delete_file');
+		var message = magdown_delete_file.getAttribute("label_pre") + ' (' + count + ')';
 		//----------------------------------------------------------------
-		var s3torrent_confirmMsg = s3torrent.utils.get_string("areYouSureConfirm");
-		if (! s3torrent.utils.confirm(message + "\n" + s3torrent_confirmMsg)) {
+		var magdown_confirmMsg = magdown.utils.get_string("areYouSureConfirm");
+		if (! magdown.utils.confirm(message + "\n" + magdown_confirmMsg)) {
 			return;
 		}
 		//----------------------------------------------------------------
@@ -633,17 +633,17 @@ s3torrent.action = function(action) {
 	}
 	//-----------------------------------------------------------------------
 	else if (action == 'open_file') {
-		var aDownload = s3torrent.get_download(s3torrent.treeView.selection.currentIndex);
+		var aDownload = magdown.get_download(magdown.treeView.selection.currentIndex);
 		aDownload.doCommand("downloadsCmd_open");
 	}
 	//-----------------------------------------------------------------------
 	else if (action == 'show_dir') {
-		var aDownload = s3torrent.get_download(s3torrent.treeView.selection.currentIndex);
+		var aDownload = magdown.get_download(magdown.treeView.selection.currentIndex);
 		aDownload.doCommand("downloadsCmd_show");
 	}
 	//-----------------------------------------------------------------------
 	else if (action == 'select_all') {
-		s3torrent.treeView.selection.selectAll();
+		magdown.treeView.selection.selectAll();
 	}
 	//-----------------------------------------------------------------------
 	else if (action == 'save_metadata') {
@@ -654,28 +654,28 @@ s3torrent.action = function(action) {
 	//-----------------------------------------------------------------------
 }
 //------------------------------------------------------------------------------
-s3torrent.action_click = function(event) {
-	document.getElementById("s3torrent_context").hidePopup();
+magdown.action_click = function(event) {
+	document.getElementById("magdown_context").hidePopup();
 	if (event.explicitOriginalTarget._lastSelectedRow < 0) {
-		s3torrent.treeView.selection.clearSelection();
-//		s3torrent.torrent_info_hide();
+		magdown.treeView.selection.clearSelection();
+//		magdown.torrent_info_hide();
 		return false;
 	}
 	//-----------------------------------------------------------------------
-	var aDownload = s3torrent.get_download(s3torrent.treeView.selection.currentIndex);
-	s3torrent.torrent_info_show(aDownload, true);
+	var aDownload = magdown.get_download(magdown.treeView.selection.currentIndex);
+	magdown.torrent_info_show(aDownload, true);
 }
 //------------------------------------------------------------------------------
-s3torrent.action_select = function(event) {
-	if (s3torrent.draw_box.start_draw) {
+magdown.action_select = function(event) {
+	if (magdown.draw_box.start_draw) {
 		return false; 
 	}
-	s3torrent.action_click(event);
+	magdown.action_click(event);
 }
 //------------------------------------------------------------------------------
-s3torrent.action_click_dbl = function(event) {
+magdown.action_click_dbl = function(event) {
 	if (event.explicitOriginalTarget._lastSelectedRow < 0) {
-		s3torrent.treeView.selection.clearSelection();
+		magdown.treeView.selection.clearSelection();
 		return false;
 	}
 	//-----------------------------------------------------------------------
@@ -683,43 +683,43 @@ s3torrent.action_click_dbl = function(event) {
 		return false;
 	}
 	//-----------------------------------------------------------------------
-	var aDownload = s3torrent.get_download(s3torrent.treeView.selection.currentIndex);
+	var aDownload = magdown.get_download(magdown.treeView.selection.currentIndex);
 	if (aDownload.s3_metaData.done) {
-		s3torrent.action('open_file');
+		magdown.action('open_file');
 	} else if (aDownload.s3_metaData.paused || ! aDownload.s3_metaData.inProgress) {
-		s3torrent.action('resume');
+		magdown.action('resume');
 	} else if (! aDownload.s3_metaData.paused) {
-		s3torrent.action('pause');
+		magdown.action('pause');
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_show = function(aDownload, is_create) {
-	var s3torrent_info = document.getElementById('s3torrent_info');
-	if ((s3torrent_info.current_torrent_id != aDownload.s3id) && (! is_create)) {
+magdown.torrent_info_show = function(aDownload, is_create) {
+	var magdown_info = document.getElementById('magdown_info');
+	if ((magdown_info.current_torrent_id != aDownload.s3id) && (! is_create)) {
 		return;
 	}
 	//------------------------------------------------------------------------
 	if (! aDownload) {
-		s3torrent.torrent_info_hide();
+		magdown.torrent_info_hide();
 		return;
 	}
-	var is_update = (s3torrent_info.current_torrent_id == aDownload.s3id);
+	var is_update = (magdown_info.current_torrent_id == aDownload.s3id);
 
-//	if ((s3torrent_info.current_torrent_id != aDownload.s3id) && (is_create)) {
-//		s3torrent_info.selectedIndex = 0;
+//	if ((magdown_info.current_torrent_id != aDownload.s3id) && (is_create)) {
+//		magdown_info.selectedIndex = 0;
 //	}
 
 	//------------------------------------------------------------------------
-	document.getElementById('s3torrent_splitter').hidden = false;
-	s3torrent_info.hidden = false;
-	s3torrent_info.current_torrent_id = aDownload.s3id;
+	document.getElementById('magdown_splitter').hidden = false;
+	magdown_info.hidden = false;
+	magdown_info.current_torrent_id = aDownload.s3id;
 
 	//------------------------------------------------------------------------
 	// tab Info
 	//------------------------------------------------------------------------
 	var info_list = aDownload.doCommand('get_torrent_info_list');
 	for (var info_key in info_list) {
-		var el = document.getElementById('s3torrent_info_' + info_key);
+		var el = document.getElementById('magdown_info_' + info_key);
 		el.setAttribute('label', info_list[info_key]);
 		var is_link = false;
 
@@ -731,20 +731,20 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 			}
 		}
 		if (is_link) {
-			el.className = 's3torrent_text_link';
-			el.parentNode.className = 's3torrent_text_link_cursor';
-			el.parentNode.addEventListener('dblclick', s3torrent.torrent_info_open_link);
+			el.className = 'magdown_text_link';
+			el.parentNode.className = 'magdown_text_link_cursor';
+			el.parentNode.addEventListener('dblclick', magdown.torrent_info_open_link);
 		} else {
 			el.className = '';
 			el.parentNode.className = '';
-			el.parentNode.removeEventListener('dblclick', s3torrent.torrent_info_open_link);
+			el.parentNode.removeEventListener('dblclick', magdown.torrent_info_open_link);
 		}
 	}
 	//------------------------------------------------------------------------
 	// tab Files
 	//------------------------------------------------------------------------
 	var file_list = aDownload.doCommand('get_file_list');
-	var file_list_box = document.getElementById('s3torrent_info_file_list');
+	var file_list_box = document.getElementById('magdown_info_file_list');
 	//------------------------------------------------------------------------
 	if (! is_update) {
 		while(file_list_box.getRowCount() > 0) {
@@ -755,7 +755,7 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 //	var file_total_size = aDownload.s3_metaData.curSize;
 	//------------------------------------------------------------------------
 	for (var file of file_list) {
-		file.file_size = s3torrent.utils.get_strings_to_KB_MB_GB(file.length);
+		file.file_size = magdown.utils.get_strings_to_KB_MB_GB(file.length);
 /*
 		//-----------------------------------------------------------------
 		if (file.status && (file.status == 'skip')) {
@@ -768,10 +768,10 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 			file_total_size = (file_total_size > 0) ? file_total_size : 0;
 		}
 		//-----------------------------------------------------------------
-		file.file_cur_size = s3torrent.utils.get_strings_to_KB_MB_GB(file.file_cur_size);
+		file.file_cur_size = magdown.utils.get_strings_to_KB_MB_GB(file.file_cur_size);
 */
 		file.file_percent = (file.length > 0) ? Math.ceil(file.downloaded * 100 / file.length) : 100;
-		file.file_cur_size = s3torrent.utils.get_strings_to_KB_MB_GB(file.downloaded);
+		file.file_cur_size = magdown.utils.get_strings_to_KB_MB_GB(file.downloaded);
 	}
 	//------------------------------------------------------------------------
 	for (var file of file_list.sort( function(a,b) {
@@ -832,7 +832,7 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 			row.file_id = file.file_id;
 			row.file_length = file.length;
 			row.file_downloaded = file.downloaded;
-			row.addEventListener('dblclick', s3torrent.torrent_info_dbl_click);
+			row.addEventListener('dblclick', magdown.torrent_info_dbl_click);
 
 			if (! file_is_process) {
 				cell1.setAttribute('disabled', true);
@@ -842,13 +842,13 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 		}
 	}
 	//------------------------------------------------------------------------
-	s3torrent.torrent_info_select_file_list_check_total();
+	magdown.torrent_info_select_file_list_check_total();
 
 	//------------------------------------------------------------------------
 	// tab Trackers
 	//------------------------------------------------------------------------
 	var tracker_list = aDownload.doCommand('get_tracker_list');
-	var tracker_list_box = document.getElementById('s3torrent_info_tracker_list');
+	var tracker_list_box = document.getElementById('magdown_info_tracker_list');
 	//------------------------------------------------------------------------
 	while(tracker_list_box.getRowCount() > 0) {
 		tracker_list_box.removeItemAt(0);
@@ -869,7 +869,7 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 
 		cell = document.createElement('listcell');
 		if (tracker.is_error) {
-			cell.setAttribute('label', 	s3torrent.utils.get_string('error.torrent_not_found'));
+			cell.setAttribute('label', 	magdown.utils.get_string('error.torrent_not_found'));
 		} else {
 			cell.setAttribute('label', 	'');
 		}
@@ -886,7 +886,7 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 	var peer_list = aDownload.doCommand('get_peer_list');
 	peer_list = httpseed_list.concat(peer_list);
 
-	var peer_list_box = document.getElementById('s3torrent_info_peer_list');
+	var peer_list_box = document.getElementById('magdown_info_peer_list');
 	//------------------------------------------------------------------------
 	while(peer_list_box.getRowCount() > 0) {
 		peer_list_box.removeItemAt(0);
@@ -909,7 +909,7 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 		row.appendChild(cell);
 
 		cell = document.createElement('listcell');
-		cell.setAttribute('label', 	s3torrent.utils.get_strings_to_KB_MB_GB(peer.peer_speed, true));
+		cell.setAttribute('label', 	magdown.utils.get_strings_to_KB_MB_GB(peer.peer_speed, true));
 		cell.style.textAlign = 'right';
 		row.appendChild(cell);
 
@@ -922,37 +922,37 @@ s3torrent.torrent_info_show = function(aDownload, is_create) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_remove = function(torrent_id) {
-	var s3torrent_info = document.getElementById('s3torrent_info');
-	if (s3torrent_info.current_torrent_id == torrent_id) {
-		s3torrent.torrent_info_hide();
+magdown.torrent_info_remove = function(torrent_id) {
+	var magdown_info = document.getElementById('magdown_info');
+	if (magdown_info.current_torrent_id == torrent_id) {
+		magdown.torrent_info_hide();
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_hide = function() {
-	document.getElementById('s3torrent_splitter').hidden = true;
-	document.getElementById('s3torrent_info').hidden = true;
-	document.getElementById('s3torrent_info').current_torrent_id = 0;
+magdown.torrent_info_hide = function() {
+	document.getElementById('magdown_splitter').hidden = true;
+	document.getElementById('magdown_info').hidden = true;
+	document.getElementById('magdown_info').current_torrent_id = 0;
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_dbl_click = function(event) {
+magdown.torrent_info_dbl_click = function(event) {
 	var s3id = event.target.s3id;
 	var file_id = event.target.file_id;
-	var aDownload = s3torrent.get_download_by_s3id(s3id);
+	var aDownload = magdown.get_download_by_s3id(s3id);
 	if (! aDownload) { return; }
 	//-----------------------------------------------------------------------
 	var file_list = aDownload.doCommand('get_file_list');
 	//-----------------------------------------------------------------------
 	if (file_list[file_id].status == 'done') {
-		s3torrent.torrent_info_open_file(aDownload, file_id);
+		magdown.torrent_info_open_file(aDownload, file_id);
 	} else {
 		var is_checked = event.target.firstChild.getAttribute("checked");
 		is_checked = (String(is_checked) == 'true');
-		s3torrent.torrent_info_select_file_list(aDownload, file_list, event.target, ! is_checked, false);
+		magdown.torrent_info_select_file_list(aDownload, file_list, event.target, ! is_checked, false);
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_keyup = function(event) {
+magdown.torrent_info_keyup = function(event) {
 	var is_run = false;
 	if (event.charCode && ((event.charCode == Components.interfaces.nsIDOMKeyEvent.DOM_VK_SPACE) || (event.charCode == Components.interfaces.nsIDOMKeyEvent.DOM_VK_ENTER))) {
 		is_run = true;
@@ -960,17 +960,17 @@ s3torrent.torrent_info_keyup = function(event) {
 		is_run = true;
 	}
 	if (is_run) {
-		s3torrent.torrent_info_dbl_click({ 'target' : event.target.selectedItem });
+		magdown.torrent_info_dbl_click({ 'target' : event.target.selectedItem });
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_open_file = function(aDownload, file_id) {
+magdown.torrent_info_open_file = function(aDownload, file_id) {
 	if (aDownload) {
 		aDownload.doCommand("downloadsCmd_open", { 'file_id' : file_id });
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_select_file_list = function(aDownload, file_list, row, is_checked, is_all) {
+magdown.torrent_info_select_file_list = function(aDownload, file_list, row, is_checked, is_all) {
 	//-----------------------------------------------------------------------
 	var file_id = row.file_id;
 	if (file_list[file_id].status == 'done') { return; }
@@ -989,26 +989,26 @@ s3torrent.torrent_info_select_file_list = function(aDownload, file_list, row, is
 	//-----------------------------------------------------------------------
 	aDownload.doCommand('set_file_status', { 'file_id': file_id, 'is_process' : is_checked, 'is_all' : is_all });
 	if (! is_all) {
-		s3torrent.torrent_info_select_file_list_check_total();
+		magdown.torrent_info_select_file_list_check_total();
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_select_file_list_all = function(checked) {
-	var file_list_box = document.getElementById('s3torrent_info_file_list');
-	var s3torrent_info = document.getElementById('s3torrent_info');
-	var aDownload = s3torrent.get_download_by_s3id(s3torrent_info.current_torrent_id);
+magdown.torrent_info_select_file_list_all = function(checked) {
+	var file_list_box = document.getElementById('magdown_info_file_list');
+	var magdown_info = document.getElementById('magdown_info');
+	var aDownload = magdown.get_download_by_s3id(magdown_info.current_torrent_id);
 	if (! aDownload) { return; }
 	var file_list = aDownload.doCommand('get_file_list');
 	
 	for (var i=0; i<file_list_box.itemCount; i++) {
-		s3torrent.torrent_info_select_file_list(aDownload, file_list, file_list_box.getItemAtIndex( i ), checked, true);
+		magdown.torrent_info_select_file_list(aDownload, file_list, file_list_box.getItemAtIndex( i ), checked, true);
 	}
 	aDownload.doCommand('set_file_status_all');
-	s3torrent.torrent_info_select_file_list_check_total();
+	magdown.torrent_info_select_file_list_check_total();
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_select_file_list_check_total = function() {
-	var file_list_box = document.getElementById('s3torrent_info_file_list');
+magdown.torrent_info_select_file_list_check_total = function() {
+	var file_list_box = document.getElementById('magdown_info_file_list');
 	var total = 0;
 	var downloaded = 0;
 	var file_count = 0;
@@ -1023,10 +1023,10 @@ s3torrent.torrent_info_select_file_list_check_total = function() {
 		}
 	}
 	var percent = (total > 0) ? Math.ceil(downloaded * 100 / total) : 100;
-	document.getElementById('s3torrent_info_file_list_total_size').value = file_count + ' / ' + s3torrent.utils.get_strings_to_KB_MB_GB(downloaded) + ' / ' + s3torrent.utils.get_strings_to_KB_MB_GB(total) + ' / ' + percent + '%';
+	document.getElementById('magdown_info_file_list_total_size').value = file_count + ' / ' + magdown.utils.get_strings_to_KB_MB_GB(downloaded) + ' / ' + magdown.utils.get_strings_to_KB_MB_GB(total) + ' / ' + percent + '%';
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_copy = function(event) {
+magdown.torrent_info_copy = function(event) {
 	var clipboard = Components.classes["@mozilla.org/widget/clipboardhelper;1"].getService(Components.interfaces.nsIClipboardHelper);
 
 	var popupAnchor = document.popupNode;
@@ -1045,7 +1045,7 @@ s3torrent.torrent_info_copy = function(event) {
 
 	var listcell_list = popupAnchor.getElementsByTagName('listcell');
 	for (var listcell of listcell_list) {
-		if (listcell.id.substring(0, 14) == 's3torrent_info') {
+		if (listcell.id.substring(0, 14) == 'magdown_info') {
 			var value = listcell.getAttribute('label');
 			if (value) {
 				clipboard.copyString(value);
@@ -1054,14 +1054,14 @@ s3torrent.torrent_info_copy = function(event) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent_info_open_link = function(event) {
+magdown.torrent_info_open_link = function(event) {
 	var listcell_list = event.target.getElementsByTagName('listcell');
 	for (var listcell of listcell_list) {
-		if (listcell.id.substring(0, 14) == 's3torrent_info') {
+		if (listcell.id.substring(0, 14) == 'magdown_info') {
 			var value = listcell.getAttribute('label');
 			if (value) {
 				if (/^magnet\:/.test(value)) {
-					s3torrent.utils.add_new_torrent({ 'data' : value, 'is_url' : true, 'referrer_url' : '' });
+					magdown.utils.add_new_torrent({ 'data' : value, 'is_url' : true, 'referrer_url' : '' });
 				} else {
 					openURL(value);
 				}
@@ -1070,65 +1070,65 @@ s3torrent.torrent_info_open_link = function(event) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.context_change_tracker_check = function(event) {
-	var aDownload = s3torrent.get_download(s3torrent.treeView.selection.currentIndex);
-	var s3torrent_trackers = document.getElementById('s3torrent_context_trackers');
+magdown.context_change_tracker_check = function(event) {
+	var aDownload = magdown.get_download(magdown.treeView.selection.currentIndex);
+	var magdown_trackers = document.getElementById('magdown_context_trackers');
 	if (aDownload.s3_metaData.paused || ! aDownload.s3_metaData.inProgress) {
-		s3torrent_trackers.disabled = false;
+		magdown_trackers.disabled = false;
 	} else {
-		s3torrent_trackers.disabled = true;
+		magdown_trackers.disabled = true;
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.action_all = function(action) {
-	s3torrent.treeView.selection.selectAll();
-	s3torrent.action(action);
-	s3torrent.treeView.selection.clearSelection();
+magdown.action_all = function(action) {
+	magdown.treeView.selection.selectAll();
+	magdown.action(action);
+	magdown.treeView.selection.clearSelection();
 }
 //------------------------------------------------------------------------------
-s3torrent.action_draw_begin = function(event) {
+magdown.action_draw_begin = function(event) {
 	if (event.button != 0) {
-		return s3torrent.action_draw_end(event);
+		return magdown.action_draw_end(event);
 	}
 	if (event.ctrlKey) {
-		return s3torrent.action_draw_end(event);
+		return magdown.action_draw_end(event);
 	}
 	if (event.target.tagName != 'treechildren') {
-		return s3torrent.action_draw_end(event);
+		return magdown.action_draw_end(event);
 	}
 	//------------------------------------------------------------------------
-	var box = document.getElementById("s3torrent_draw_box");
-	var hbox = document.getElementById("s3torrent_draw_box_hbox");
+	var box = document.getElementById("magdown_draw_box");
+	var hbox = document.getElementById("magdown_draw_box_hbox");
 
 	//------------------------------------------------------------------------
-	s3torrent.draw_box.start_x = event.pageX;
-	s3torrent.draw_box.start_y = event.pageY;
+	magdown.draw_box.start_x = event.pageX;
+	magdown.draw_box.start_y = event.pageY;
 
 	//------------------------------------------------------------------------
 	box.style.left = event.pageX + "px";
 	box.style.top = event.pageY + "px";
 	hbox.height = 0;
 	hbox.width = 0;
-	s3torrent.draw_box.start_draw = true;
+	magdown.draw_box.start_draw = true;
 }
 //------------------------------------------------------------------------------
-s3torrent.action_draw_move = function(event) {
+magdown.action_draw_move = function(event) {
 	//------------------------------------------------------------------------
-	if (! s3torrent.draw_box.start_draw) {
+	if (! magdown.draw_box.start_draw) {
 		return;
 	}
 	//------------------------------------------------------------------------
-	var box = document.getElementById("s3torrent_draw_box");
-	var hbox = document.getElementById("s3torrent_draw_box_hbox");
+	var box = document.getElementById("magdown_draw_box");
+	var hbox = document.getElementById("magdown_draw_box_hbox");
 	//------------------------------------------------------------------------
 	var mouseX = event.pageX;
 	var mouseY = event.pageY;
 	//------------------------------------------------------------------------
-	var left = mouseX < s3torrent.draw_box.start_x ? mouseX : s3torrent.draw_box.start_x;
-	var top = mouseY < s3torrent.draw_box.start_y ? mouseY : s3torrent.draw_box.start_y;
+	var left = mouseX < magdown.draw_box.start_x ? mouseX : magdown.draw_box.start_x;
+	var top = mouseY < magdown.draw_box.start_y ? mouseY : magdown.draw_box.start_y;
 	//------------------------------------------------------------------------
-	var width = Math.abs(mouseX - s3torrent.draw_box.start_x);
-	var height = Math.abs(mouseY - s3torrent.draw_box.start_y);
+	var width = Math.abs(mouseX - magdown.draw_box.start_x);
+	var height = Math.abs(mouseY - magdown.draw_box.start_y);
 
 	//------------------------------------------------------------------------
 	box.hidden = false;
@@ -1139,54 +1139,54 @@ s3torrent.action_draw_move = function(event) {
 	hbox.height = height;
 
 	//------------------------------------------------------------------------
-	s3torrent.treeView.selection.clearSelection();
+	magdown.treeView.selection.clearSelection();
 	for (var sel_y = top; sel_y < (top+height); sel_y++) {
-		var row = s3torrent.treeView.tree.getRowAt(event.clientX, sel_y);
+		var row = magdown.treeView.tree.getRowAt(event.clientX, sel_y);
 		if (row > -1) {
-			s3torrent.treeView.selection.rangedSelect(row, row, true);
+			magdown.treeView.selection.rangedSelect(row, row, true);
 		}
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.action_draw_end = function(event) {
-	document.getElementById("s3torrent_draw_box").hidden = true;
-	if (s3torrent.draw_box.start_draw) {
-		if (s3torrent.treeView.selection.count > 1) {
-			document.getElementById("s3torrent_context").openPopupAtScreen(event.screenX, event.screenY, true);
+magdown.action_draw_end = function(event) {
+	document.getElementById("magdown_draw_box").hidden = true;
+	if (magdown.draw_box.start_draw) {
+		if (magdown.treeView.selection.count > 1) {
+			document.getElementById("magdown_context").openPopupAtScreen(event.screenX, event.screenY, true);
 		}
 	}
-	s3torrent.draw_box.start_draw = false;
+	magdown.draw_box.start_draw = false;
 }
 //------------------------------------------------------------------------------
 //------------------------------------------------------------------------------
-s3torrent.treeView = {};
-s3torrent.treeView.rowCount = 0;
-s3torrent.treeView.selection = null;
-s3torrent.treeView.download_list = [];
-s3torrent.treeView.tree = null;
-s3torrent.treeView.sortName = 'DateTime';
-s3torrent.treeView.sortDirection = 'descending';
-s3torrent.treeView.filterText = '';
+magdown.treeView = {};
+magdown.treeView.rowCount = 0;
+magdown.treeView.selection = null;
+magdown.treeView.download_list = [];
+magdown.treeView.tree = null;
+magdown.treeView.sortName = 'DateTime';
+magdown.treeView.sortDirection = 'descending';
+magdown.treeView.filterText = '';
 
 //------------------------------------------------------------------------------
-s3torrent.treeView.insert_data = function(aDownload)  {
-	s3torrent.treeView.download_list.push(aDownload);
+magdown.treeView.insert_data = function(aDownload)  {
+	magdown.treeView.download_list.push(aDownload);
 	if (aDownload.isView) {
-		s3torrent.treeView.tree.rowCountChanged(0, 1);
-		s3torrent.treeView.rowCount++;
-		s3torrent.treeView.sortElements();
+		magdown.treeView.tree.rowCountChanged(0, 1);
+		magdown.treeView.rowCount++;
+		magdown.treeView.sortElements();
 	}
 };
 //------------------------------------------------------------------------------
-s3torrent.treeView.change_data = function(row_tree)  {
-	if (s3torrent.treeView.tree != null) {
-		s3torrent.treeView.tree.invalidateRow(row_tree);
-		s3torrent.treeView.sortElements();
+magdown.treeView.change_data = function(row_tree)  {
+	if (magdown.treeView.tree != null) {
+		magdown.treeView.tree.invalidateRow(row_tree);
+		magdown.treeView.sortElements();
 	}
 };
 //------------------------------------------------------------------------------
-s3torrent.treeView.getCellText = function(row, aColumn) {
-	var d = s3torrent.get_download_metaData(row);
+magdown.treeView.getCellText = function(row, aColumn) {
+	var d = magdown.get_download_metaData(row);
 	if (! d) { return; }
 
 	if (aColumn.id == "TorrentName") {
@@ -1197,7 +1197,7 @@ s3torrent.treeView.getCellText = function(row, aColumn) {
 	}
 	else if (aColumn.id == "DateTime") {
 		var date = new Date(d.endTime);
-		return date.toLocaleFormat(s3torrent.dateTime_format);
+		return date.toLocaleFormat(magdown.dateTime_format);
 	}
 	else if (aColumn.id == "FileSize") {
 		if (d.done) {
@@ -1230,8 +1230,8 @@ s3torrent.treeView.getCellText = function(row, aColumn) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.getCellValue = function(row, aColumn) {
-	var d = s3torrent.get_download_metaData(row);
+magdown.treeView.getCellValue = function(row, aColumn) {
+	var d = magdown.get_download_metaData(row);
 	if (! d) { return; };
 
 	if (aColumn.id == "Progress") {
@@ -1239,8 +1239,8 @@ s3torrent.treeView.getCellValue = function(row, aColumn) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.getProgressMode = function(row, aColumn) {
-	var d = s3torrent.get_download_metaData(row);
+magdown.treeView.getProgressMode = function(row, aColumn) {
+	var d = magdown.get_download_metaData(row);
 	if (! d) { return; };
 
 	var nsITreeView = Components.interfaces.nsITreeView;
@@ -1252,8 +1252,8 @@ s3torrent.treeView.getProgressMode = function(row, aColumn) {
 	return nsITreeView.PROGRESS_NONE;
  }
 //------------------------------------------------------------------------------
-s3torrent.treeView.getRowProperties = function(row) {
-	var d = s3torrent.get_download_metaData(row);
+magdown.treeView.getRowProperties = function(row) {
+	var d = magdown.get_download_metaData(row);
 	if (! d) { return; };
 
 	if (d.error) {
@@ -1270,52 +1270,52 @@ s3torrent.treeView.getRowProperties = function(row) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.getCellProperties = function(row, aColumn) {
-	return s3torrent.treeView.getRowProperties(row);
+magdown.treeView.getCellProperties = function(row, aColumn) {
+	return magdown.treeView.getRowProperties(row);
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.setTree = function(aTree) {
-	s3torrent.treeView.tree = aTree;
+magdown.treeView.setTree = function(aTree) {
+	magdown.treeView.tree = aTree;
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.cycleHeader = function(aColumn) {
+magdown.treeView.cycleHeader = function(aColumn) {
 	var elem = document.getElementById(aColumn.id);
-	s3torrent.treeView.sortName = elem.id;
-	s3torrent.treeView.sortDirection = elem.getAttribute('sortDirection');
-	s3torrent.treeView.sortDirection = (s3torrent.treeView.sortDirection == 'ascending') ? 'descending' : 'ascending';
-	s3torrent.treeView.sortElements();
+	magdown.treeView.sortName = elem.id;
+	magdown.treeView.sortDirection = elem.getAttribute('sortDirection');
+	magdown.treeView.sortDirection = (magdown.treeView.sortDirection == 'ascending') ? 'descending' : 'ascending';
+	magdown.treeView.sortElements();
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.sortElements = function() {
-	s3torrent.sort_handler_count++;
+magdown.treeView.sortElements = function() {
+	magdown.sort_handler_count++;
 
-	if (s3torrent.sort_handler_count > 100) {
-		if (s3torrent.sort_handler != null) {
-			clearTimeout(s3torrent.sort_handler);
+	if (magdown.sort_handler_count > 100) {
+		if (magdown.sort_handler != null) {
+			clearTimeout(magdown.sort_handler);
 		}
-		if (s3torrent.sort_handler_count > 1000) {
-			s3torrent.treeView.sortElements_count_clear();
+		if (magdown.sort_handler_count > 1000) {
+			magdown.treeView.sortElements_count_clear();
 		} else {
-			s3torrent.sort_handler = setTimeout(function(){ s3torrent.treeView.sortElements_count_clear(); } , 50);
+			magdown.sort_handler = setTimeout(function(){ magdown.treeView.sortElements_count_clear(); } , 50);
 		}
 	} else {
-		s3torrent.treeView.sortElements_run();
+		magdown.treeView.sortElements_run();
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.sortElements_count_clear = function() {
-	s3torrent.sort_handler_count = 0;
-	s3torrent.sort_handler = null;
-	s3torrent.treeView.sortElements_run();
+magdown.treeView.sortElements_count_clear = function() {
+	magdown.sort_handler_count = 0;
+	magdown.sort_handler = null;
+	magdown.treeView.sortElements_run();
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.sortElements_run = function() {
+magdown.treeView.sortElements_run = function() {
 	//------------------------------------------------------------------------
-	var sortName = s3torrent.treeView.sortName;
-	var sortDirection = s3torrent.treeView.sortDirection;
-	var selectionHash = s3torrent.treeView.selectionGet();
+	var sortName = magdown.treeView.sortName;
+	var sortDirection = magdown.treeView.sortDirection;
+	var selectionHash = magdown.treeView.selectionGet();
 	//------------------------------------------------------------------------
-	var cols = s3torrent.tree.getElementsByTagName("treecol");
+	var cols = magdown.tree.getElementsByTagName("treecol");
 	for (var i = 0; i < cols.length; i++) {
 		cols[i].removeAttribute("sortActive");
 		cols[i].removeAttribute("sortDirection");
@@ -1324,7 +1324,7 @@ s3torrent.treeView.sortElements_run = function() {
 	//------------------------------------------------------------------------
 	var elem = document.getElementById(sortName);
 	elem.setAttribute('sortActive', true);
-	elem.setAttribute('sortDirection', s3torrent.treeView.sortDirection);
+	elem.setAttribute('sortDirection', magdown.treeView.sortDirection);
 
 	//------------------------------------------------------------------------
 	var func_sort = function(a1, b1) {
@@ -1355,59 +1355,59 @@ s3torrent.treeView.sortElements_run = function() {
 		else { return 0; }
 	};
 	//------------------------------------------------------------------------
-	s3torrent.treeView.download_list = s3torrent.treeView.download_list.sort(func_sort);
-	s3torrent.treeView.tree.invalidate();
-	s3torrent.treeView.selectionRestore(selectionHash);
-	s3torrent.count_summary();
+	magdown.treeView.download_list = magdown.treeView.download_list.sort(func_sort);
+	magdown.treeView.tree.invalidate();
+	magdown.treeView.selectionRestore(selectionHash);
+	magdown.count_summary();
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.search = function(text) {
-	s3torrent.treeView.filterText = text;
+magdown.treeView.search = function(text) {
+	magdown.treeView.filterText = text;
 	var row = -1;
-	for (var d of s3torrent.treeView.download_list) {
+	for (var d of magdown.treeView.download_list) {
 		if (d.isView) { row++; }
 
-		if (s3torrent.check_download_filter(d, s3torrent.treeView.filterText)) {
+		if (magdown.check_download_filter(d, magdown.treeView.filterText)) {
 			if (d.isView == false) {
 				d.isView = true;
-				s3torrent.treeView.tree.rowCountChanged(row, 1);
-				s3torrent.treeView.rowCount++;
+				magdown.treeView.tree.rowCountChanged(row, 1);
+				magdown.treeView.rowCount++;
 				row++;
 			}
 		} else if (d.isView) {
-			s3torrent.treeView.tree.rowCountChanged(row, -1);
-			s3torrent.treeView.rowCount--;
+			magdown.treeView.tree.rowCountChanged(row, -1);
+			magdown.treeView.rowCount--;
 			row--;
 			d.isView = false;
 		}
 	}
-	s3torrent.treeView.sortElements();
+	magdown.treeView.sortElements();
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.isContainer = function(aRow) { return false; }
-s3torrent.treeView.isContainerOpen = function(aRow) { return false; }
-s3torrent.treeView.isContainerEmpty = function(aRow) { return false; }
-s3torrent.treeView.isSeparator = function(aRow) { return false; }
-s3torrent.treeView.isSorted = function() { return false; }
-s3torrent.treeView.canDrop = function(aIdx, aOrientation) { return false; }
-s3torrent.treeView.drop = function(aIdx, aOrientation) { }
-s3torrent.treeView.getParentIndex = function(aRow) { return -1; }
-s3torrent.treeView.hasNextSibling = function(aRow, aAfterIdx) { return false; }
-s3torrent.treeView.getLevel = function(aRow) { return 0; }
+magdown.treeView.isContainer = function(aRow) { return false; }
+magdown.treeView.isContainerOpen = function(aRow) { return false; }
+magdown.treeView.isContainerEmpty = function(aRow) { return false; }
+magdown.treeView.isSeparator = function(aRow) { return false; }
+magdown.treeView.isSorted = function() { return false; }
+magdown.treeView.canDrop = function(aIdx, aOrientation) { return false; }
+magdown.treeView.drop = function(aIdx, aOrientation) { }
+magdown.treeView.getParentIndex = function(aRow) { return -1; }
+magdown.treeView.hasNextSibling = function(aRow, aAfterIdx) { return false; }
+magdown.treeView.getLevel = function(aRow) { return 0; }
 
 //------------------------------------------------------------------------------
-s3torrent.treeView.selectionGet = function() {
+magdown.treeView.selectionGet = function() {
 	var result = {};
-	if (s3torrent.treeView.selection) {
-		var selectionCount = s3torrent.treeView.selection.count;
+	if (magdown.treeView.selection) {
+		var selectionCount = magdown.treeView.selection.count;
 		if (selectionCount) {
 			let start = {};
 			let end = {};
-			let numRanges = s3torrent.treeView.selection.getRangeCount();
+			let numRanges = magdown.treeView.selection.getRangeCount();
 			for (let rg = 0; rg < numRanges; rg++) {
-				s3torrent.treeView.selection.getRangeAt(rg, start, end);
+				magdown.treeView.selection.getRangeAt(rg, start, end);
 				for (var row = start.value; row <= end.value; row++) {
-					var aDownload = s3torrent.get_download(row);
+					var aDownload = magdown.get_download(row);
 					if (aDownload) {
 						result[aDownload.s3id] = aDownload;
 					}
@@ -1418,18 +1418,18 @@ s3torrent.treeView.selectionGet = function() {
 	return result;
 }
 //------------------------------------------------------------------------------
-s3torrent.treeView.selectionRestore = function(selectionHash) {
-	s3torrent.treeView.selection.clearSelection();
+magdown.treeView.selectionRestore = function(selectionHash) {
+	magdown.treeView.selection.clearSelection();
 	for (var s3id in selectionHash) {
-		var res = s3torrent.get_row_download(s3id);
+		var res = magdown.get_row_download(s3id);
 		if (res.row_tree >= 0) {
-			s3torrent.treeView.selection.rangedSelect(res.row_tree, res.row_tree, true);
+			magdown.treeView.selection.rangedSelect(res.row_tree, res.row_tree, true);
 		}
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.settings = function() {
-	var winD = window.openDialog('chrome://s3torrent/content/settings.xul', 's3torrent_prefs', 'chrome,modal,centerscreen,toolbar');
+magdown.settings = function() {
+	var winD = window.openDialog('chrome://magdown/content/settings.xul', 'magdown_prefs', 'chrome,modal,centerscreen,toolbar');
 	winD.focus();
 }
 //------------------------------------------------------------------------------

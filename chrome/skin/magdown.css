@@ -1,0 +1,129 @@
+caption.prefs {
+	font-weight: bold;
+}
+/* for Firefox 29+ */
+#main-window[customizing] #magdown_toolbar_button_text {
+	display: none !important;
+}
+#main-window[customizing] #magdown_toolbar_button {
+	list-style-image: url("chrome://magdown/skin/magdown24.png");
+}
+/* for Firefox 26-28 */
+#nav-bar[customizing="true"] #magdown_toolbar_button_text {
+	list-style-image: url("chrome://magdown/skin/magdown24.png");
+	display: none !important;
+}
+#nav-bar[customizing="true"] #magdown_toolbar_button {
+	list-style-image: url("chrome://magdown/skin/magdown24.png");
+}
+#magdown_toolbar_button {
+	list-style-image: url("chrome://magdown/skin/magdown24.png");
+}
+toolbar[iconsize="small"] #magdown_toolbar_button {
+	list-style-image: url("chrome://magdown/skin/magdown16.png");
+}
+#magdown_toolbar_button[is_error=true] {
+	list-style-image: url("chrome://magdown/skin/magdown24_error.png");
+}
+toolbar[iconsize="small"] #magdown_toolbar_button[is_error=true] {
+	list-style-image: url("chrome://magdown/skin/magdown16_error.png");
+}
+#magdown_toolbar_button[is_stop=true] {
+	list-style-image: url("chrome://magdown/skin/magdown24_stop.png");
+}
+toolbar[iconsize="small"] #magdown_toolbar_button[is_stop=true] {
+	list-style-image: url("chrome://magdown/skin/magdown16_stop.png");
+}
+.magdown_step_next[disabled=true]:not([is_error=true]) {
+	list-style-image: url("chrome://magdown/skin/magdown16_wait.png");
+}
+#magdown_toolbar_button[is_dragover=true] {
+	outline-color: red !important;
+	outline-offset: -3px !important;
+	outline-style: dashed !important;
+	outline-width: 2px !important;
+}
+#magdown_toolsmenu {
+	list-style-image: url("chrome://magdown/skin/magdown16.png");
+}
+#magdown_tree treechildren::-moz-tree-cell-text(progress), #magdown_tree treechildren::-moz-tree-cell-text(pause), #magdown_tree treechildren::-moz-tree-cell-text(cancel) {
+	color: #000000;
+}
+#magdown_tree treechildren::-moz-tree-row(error) {
+	background-color: #FFC6C6 !important;
+}
+#magdown_tree treechildren::-moz-tree-cell-text(error) {
+	color: #940110;
+}
+#magdown_tree treechildren::-moz-tree-row(progress) {
+	background-color: #C0FEAB !important;
+}
+#magdown_tree treechildren::-moz-tree-row(pause) {
+	background-color: #FFC482 !important;
+}
+#magdown_tree treechildren::-moz-tree-row(cancel) {
+	background-color: #D2CDAE !important;
+}
+#magdown_tree treechildren::-moz-tree-progressmeter {
+	color: #00910F !important;
+}
+#magdown_tree treechildren::-moz-tree-progressmeter(pause), #magdown_tree treechildren::-moz-tree-progressmeter(cancel) {
+	color: #93988B !important;
+}
+#magdown_tree treechildren::-moz-tree-row(hover){
+	background-image: linear-gradient(rgba(186, 182, 186, 0.8), rgba(194, 190, 194, 0.8));
+}
+#magdown_tree treechildren::-moz-tree-row(selected) {
+	background-image: linear-gradient(rgba(84, 44, 101, 0.4), rgba(111, 58, 133, 0.4));
+}
+#magdown_tree treechildren::-moz-tree-cell-text(selected) {
+	color: #CE005C;
+}
+#magdown_tree treechildren::-moz-tree-row {
+	min-height: 2em;
+	margin: 1px;
+}
+#magdown_tree {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+#magdown_draw_box { 
+	background: url("chrome://magdown/skin/blue.png"); 
+	position:fixed;
+	border: 1px #6190C4 solid;
+}
+#magdown_button_settings {
+	list-style-image : url("chrome://magdown/skin/tango_mini.png");
+	-moz-image-region: rect(0px, 80px, 16px, 64px);
+	margin:0px 3px;
+}
+.magdown_text_link {
+	color: #036CF5;
+	cursor: pointer;
+}
+.magdown_text_link_cursor {
+	cursor: pointer;
+}
+#magdown_info_error_text {
+	color: #990000;
+}
+#magdown_open_DL_history {
+	list-style-image : url("chrome://magdown/skin/tango_mini.png");
+	-moz-image-region: rect(0px, 16px, 16px, 0px);
+}
+#magdown_resume_all {
+	list-style-image : url("chrome://magdown/skin/tango_mini.png");
+	-moz-image-region: rect(0px, 32px, 16px, 16px);
+}
+#magdown_stop_all {
+	list-style-image : url("chrome://magdown/skin/tango_mini.png");
+	-moz-image-region: rect(0px, 48px, 16px, 32px);
+}
+#magdown_add_new_torrent {
+	list-style-image : url("chrome://magdown/skin/tango_mini.png");
+	-moz-image-region: rect(0px, 64px, 16px, 48px);
+}
+#magdown_open_options {
+	list-style-image : url("chrome://magdown/skin/tango_mini.png");
+	-moz-image-region: rect(0px, 80px, 16px, 64px);
+}

@@ -1,0 +1,91 @@
+<!ENTITY title.label "MagDown">
+<!ENTITY open.torrent.history.label "下载历史">
+<!ENTITY settings.label "设置">
+<!ENTITY add.new.torrent.label "添加torrent">
+
+<!ENTITY new.torrent.selector.url.label "来自链接URL (http, ftp, magnet) or Hash">
+<!ENTITY new.torrent.selector.file.label "来自文件">
+<!ENTITY new.torrent.selector.file.open.label "选择文件">
+<!ENTITY new.torrent.selector.file.list.label "File list">
+<!ENTITY new.torrent.next.step.label "下一步">
+<!ENTITY new.torrent.prev.step.label "上一步">
+<!ENTITY new.torrent.skip.step.label "开始!">
+<!ENTITY new.torrent.skip.step.later.label "Download later">
+<!ENTITY new.torrent.privacywarn1.label "警告：MagDown不使用加密連接，可能會繞過代理。 ">
+<!ENTITY new.torrent.privacywarn2.label "請考慮使用VPN下載隱私。">
+
+<!ENTITY cmd.stop.all.label "全部停止">
+<!ENTITY cmd.resume.all.label "全部恢复">
+<!ENTITY cmd.cancel.all.label "取消所有下载">
+<!ENTITY cmd.remove.all.label "清除已完成">
+
+<!ENTITY cmd.pause.label "暂停">
+<!ENTITY cmd.resume.label "恢复">
+<!ENTITY cmd.cancel.label "取消">
+<!ENTITY cmd.show.label "打开目标路径">
+<!ENTITY cmd.retry.label "重试">
+<!ENTITY cmd.goToDownloadPage.label "转到下载页">
+<!ENTITY cmd.copyDownloadLink.label "复制下载链接">
+<!ENTITY cmd.removeFromHistory.label "从历史记录中删除">
+<!ENTITY cmd.select.all.label "全选">
+<!ENTITY cmd.delete.label "从系统中删除">
+<!ENTITY cmd.open.label "打开">
+<!ENTITY cmd.copy.label "复制">
+<!ENTITY cmd.trackers.label "Change trackers">
+<!ENTITY cmd.save.metadata.label "Save metadata torrent file">
+
+<!ENTITY fromTip.label "From:">
+<!ENTITY toTip.label "To:">
+<!ENTITY sizeTip.label "文件大小:">
+<!ENTITY percentTip.label "完成百分比:">
+<!ENTITY avgSpeedTip.label "平均速度:">
+<!ENTITY timeTip.label "剩余时间:">
+
+<!ENTITY downloadsLibrary.TorrentName.label "文件名">
+<!ENTITY downloadsLibrary.SaveDir.label "保存路径">
+<!ENTITY downloadsLibrary.Size.label "大小">
+<!ENTITY downloadsLibrary.DateTime.label "Date">
+<!ENTITY downloadsLibrary.URL.label "URL">
+<!ENTITY downloadsLibrary.Progress.label "进度">
+<!ENTITY downloadsLibrary.TimeRemaining.label "剩余时间">
+<!ENTITY downloadsLibrary.Peers.label "Peers">
+<!ENTITY downloadsLibrary.Speed.label "速度">
+<!ENTITY downloadsLibrary.Percent.label "完成百分比">
+<!ENTITY downloadsLibrary.Info.label "一般信息">
+
+<!ENTITY downloadsLibrary.TorrentInfo.Files.label "文件">
+<!ENTITY downloadsLibrary.TorrentInfo.FileName.label "文件名">
+<!ENTITY downloadsLibrary.TorrentInfo.Address.label "Address">
+<!ENTITY downloadsLibrary.TorrentInfo.Client.label "Client name">
+<!ENTITY downloadsLibrary.TorrentInfo.MagnetLink.label "Magnet link">
+<!ENTITY downloadsLibrary.TorrentInfo.FilesCount.label "文件数">
+<!ENTITY downloadsLibrary.TorrentInfo.Hash.label "Hash">
+<!ENTITY downloadsLibrary.TorrentInfo.Publisher.label "Publisher">
+<!ENTITY downloadsLibrary.TorrentInfo.PublisherUrl.label "Publisher (URL)">
+<!ENTITY downloadsLibrary.TorrentInfo.Created.label "创建于">
+<!ENTITY downloadsLibrary.TorrentInfo.Comment.label "Comment">
+<!ENTITY downloadsLibrary.TorrentInfo.Error.label "错误">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadPage.label "Download Page">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadLink.label "Download Link">
+<!ENTITY downloadsLibrary.TorrentInfo.Trackers.label "Trackers">
+
+<!ENTITY pShowButtons.label "显示下列按钮:">
+<!ENTITY pSwitchDownloadsTab.label "任务开始后切换到下载标签页">
+<!ENTITY pDateTimeFormat.label "时间格式:">
+<!ENTITY pDefaultSaveDir.label "默认保存路径:">
+<!ENTITY pDefaultSelectDir.label "选择">
+<!ENTITY pDefaultSaveDirReset.label "恢复默认">
+<!ENTITY pMaximumNumberPeers.label "peers最多数目(最多 500):">
+<!ENTITY pMagnetURIassociation.label "Magnet-URI关联">
+<!ENTITY pTorrentFileTypeAssociation.label ".torrent 文件类型关联">
+<!ENTITY pDataMaxBuffer.label "最大磁盘缓存:">
+<!ENTITY pDataMaxBufferMB.label "MB">
+<!ENTITY pQuicklyStartDownload.label "快速启动下载(跳过所有“下一步”直接进行下载)">
+<!ENTITY pShowCounterToolbarbutton.label "Show counter on the toolbar button">
+<!ENTITY pDisableNotifications.label "Disable notifications">
+<!ENTITY pSpeedLimitAll.label "Maximum download speed (total):">
+<!ENTITY pSpeedLimitOne.label "Maximum download speed (single torrent):">
+<!ENTITY pSpeedLimitDescription.label "* The lower the value, the greater the deviation; 0 = unlimited">
+<!ENTITY pSpeedLimitAbbr.label "KB/sec">
+
+<!ENTITY pGeneralTab.label "General">

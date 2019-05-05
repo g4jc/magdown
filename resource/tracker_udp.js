@@ -1,12 +1,12 @@
 this.EXPORTED_SYMBOLS = [ "UDPTracker" ];
 
-var s3torrent = {};
-Components.utils.import("resource://s3torrent/utils.js", s3torrent);
+var magdown = {};
+Components.utils.import("resource://magdown/utils.js", magdown);
 
 //-----------------------------------------------------------------------------------
-s3torrent.UDPTracker = function(torrent, url) {
+magdown.UDPTracker = function(torrent, url) {
 	this.url = url;
-	this.parsedUrl = s3torrent.utils.parse_uri(this.url);
+	this.parsedUrl = magdown.utils.parse_uri(this.url);
 	this.host = this.parsedUrl.host;
 	this.port = parseInt(this.parsedUrl.port) || 80;
 	this.torrent = torrent;
@@ -22,10 +22,10 @@ s3torrent.UDPTracker = function(torrent, url) {
 	this.event = 'started';
 }
 
-this.UDPTracker = s3torrent.UDPTracker;
+this.UDPTracker = magdown.UDPTracker;
 
 //-----------------------------------------------------------------------------------
-s3torrent.UDPTracker.prototype = {
+magdown.UDPTracker.prototype = {
 	//-----------------------------------------------------------------------------
 	udp_server_callback : function() {
 	},
@@ -58,15 +58,20 @@ s3torrent.UDPTracker.prototype = {
 
 		var connRequest = this.get_connection_data();
 		this.udp_server_callback = function(aSocket, aMessage) {
-			var rawData = (aMessage.rawData) ? aMessage.rawData : s3torrent.utils.string_to_uint8Array(aMessage.data);
+			var rawData = (aMessage.rawData) ? aMessage.rawData : magdown.utils.string_to_uint8Array(aMessage.data);
 			var resp = new DataView( rawData.buffer );
 			var respAction = resp.getUint32(0);
 			var respTransactionId = resp.getUint32(4);
 			this.connection_id = [resp.getUint32(8), resp.getUint32(12)];
 			this.on_announce_connect();
 		}
-		this.timeout_id = s3torrent.utils.setTimeout(function() { _this.on_timeout(); }, 10000);
-		this.udpSocket.send( this.host, this.port, connRequest, connRequest.byteLength);
+		this.timeout_id = magdown.utils.setTimeout(function() { _this.on_timeout(); }, 10000);
+		try {
+			this.udpSocket.send( this.host, this.port, connRequest, connRequest.byteLength);
+		} catch(e) {
+			magdown.utils.clearTimeout( this.timeout_id );
+			this.on_timeout();
+		}
 	},
 	//-----------------------------------------------------------------------------
 	get_connection_data: function() {
@@ -84,13 +89,13 @@ s3torrent.UDPTracker.prototype = {
 	},
 	//-----------------------------------------------------------------------------
 	on_announce_connect: function() {
-		s3torrent.utils.clearTimeout( this.timeout_id );
+		magdown.utils.clearTimeout( this.timeout_id );
 		var _this = this;
 		var announceRequest = this.get_announce_payload();
 		this.udp_server_callback = function(aSocket, aMessage) {
 			this.on_announce_response(aSocket, aMessage);
 		};
-		this.timeout_id = s3torrent.utils.setTimeout(function() { _this.on_timeout(); }, 10000);
+		this.timeout_id = magdown.utils.setTimeout(function() { _this.on_timeout(); }, 10000);
 		this.udpSocket.send(this.host, this.port, announceRequest, announceRequest.byteLength);
 	},
 	//-----------------------------------------------------------------------------
@@ -119,7 +124,7 @@ s3torrent.UDPTracker.prototype = {
 		for (var i=0; i<20; i++) {
 			v.setInt8(16+i, this.torrent.metadata.hashbytes[i])
 		}
-		var peeridbytes = s3torrent.utils.get_peerid_bytes();
+		var peeridbytes = magdown.utils.get_peerid_bytes();
 		for (var i=0; i<20; i++) {
 			v.setInt8(36+i, peeridbytes[i]);
 		}
@@ -136,8 +141,8 @@ s3torrent.UDPTracker.prototype = {
 	},
 	//-----------------------------------------------------------------------------
 	on_announce_response: function(aSocks, aMessage) {
-		s3torrent.utils.clearTimeout( this.timeout_id );
-		var rawData = (aMessage.rawData) ? aMessage.rawData : s3torrent.utils.string_to_uint8Array(aMessage.data);
+		magdown.utils.clearTimeout( this.timeout_id );
+		var rawData = (aMessage.rawData) ? aMessage.rawData : magdown.utils.string_to_uint8Array(aMessage.data);
 		var readResponse = rawData.buffer;
 
 		if (readResponse.byteLength <= 20) {

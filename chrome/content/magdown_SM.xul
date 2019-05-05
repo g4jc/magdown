@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://magdown/skin/magdown.css" type="text/css"?>
+<!DOCTYPE window [
+<!ENTITY % navigatorDTD SYSTEM "chrome://navigator/locale/navigator.dtd" >
+%navigatorDTD;
+<!ENTITY % magdownDTD SYSTEM "chrome://magdown/locale/magdown.dtd" >
+%magdownDTD;
+]>
+
+<overlay id="magdown" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<!-- SeaMonkey tools menu -->
+	<menupopup id="taskPopup">
+		<menu id="magdown_toolsmenu" label="&title.label;" insertafter="devToolsSeparator" class="menu-iconic">
+			<menupopup id="magdown_toolsmenu_popup"/>
+		</menu>
+	</menupopup>
+</overlay>

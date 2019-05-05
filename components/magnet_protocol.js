@@ -5,7 +5,7 @@ Components.utils.import("resource://gre/modules/Services.jsm");
 function S3TorrentTornado_Magnet() {};
 S3TorrentTornado_Magnet.prototype = {
 	scheme: "magnet",
-	prefs: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.s3torrent."),
+	prefs: Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.magdown."),
 	newURI: function(aSpec, aOriginCharset, aBaseURI) {
 		if (aSpec) {
 			var uri = Components.classes["@mozilla.org/network/simple-uri;1"].createInstance(Components.interfaces.nsIURI);
@@ -17,7 +17,7 @@ S3TorrentTornado_Magnet.prototype = {
 	},
 	newChannel: function(aURI) {
 		var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
-		observerService.notifyObservers(aURI, "s3torrent-magnet-open-url", "magnet");
+		observerService.notifyObservers(aURI, "magdown-magnet-open-url", "magnet");
 		return Services.io.newChannel("javascript:void()", null, null);
 	},
 	classDescription: "Torrent Tornado - Magnet Protocol Handler",
@@ -27,8 +27,8 @@ S3TorrentTornado_Magnet.prototype = {
 	QueryInterface: XPCOMUtils.generateQI([Components.interfaces.nsIProtocolHandler]),
 };
 
-var s3torrent_prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.s3torrent.");
-if (s3torrent_prefs.getBoolPref('magnet_uri_association')) {
+var magdown_prefs = Components.classes["@mozilla.org/preferences-service;1"].getService(Components.interfaces.nsIPrefService).getBranch("extensions.magdown.");
+if (magdown_prefs.getBoolPref('magnet_uri_association')) {
 	if (XPCOMUtils.generateNSGetFactory) {
 		var NSGetFactory = XPCOMUtils.generateNSGetFactory([S3TorrentTornado_Magnet]);
 	} else {

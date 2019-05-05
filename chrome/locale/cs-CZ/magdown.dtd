@@ -1,0 +1,91 @@
+<!ENTITY title.label "MagDown">
+<!ENTITY open.torrent.history.label "Historie stahování">
+<!ENTITY settings.label "Nastavení">
+<!ENTITY add.new.torrent.label "Přidání nového torrentu">
+
+<!ENTITY new.torrent.selector.url.label "URL (HTTP, FTP, magnet) nebo hash">
+<!ENTITY new.torrent.selector.file.label "Soubor">
+<!ENTITY new.torrent.selector.file.open.label "Zvolit soubor">
+<!ENTITY new.torrent.selector.file.list.label "File list">
+<!ENTITY new.torrent.next.step.label "Další krok">
+<!ENTITY new.torrent.prev.step.label "Předchozí krok">
+<!ENTITY new.torrent.skip.step.label "Start!">
+<!ENTITY new.torrent.skip.step.later.label "Download later">
+<!ENTITY new.torrent.privacywarn1.label "Upozornění: MagDown nepoužívá šifrované připojení a může přesměrovat">
+<!ENTITY new.torrent.privacywarn2.label "server proxy. Vezměte prosím v úvahu použití VPN pro soukromí ke stažení.">
+
+<!ENTITY cmd.stop.all.label "Pozastavit vše">
+<!ENTITY cmd.resume.all.label "Pokračovat ve všem">
+<!ENTITY cmd.cancel.all.label "Ukončit vše">
+<!ENTITY cmd.remove.all.label "Vyčistit vše">
+
+<!ENTITY cmd.pause.label "Pozastavit">
+<!ENTITY cmd.resume.label "Pokračovat">
+<!ENTITY cmd.cancel.label "Ukončit">
+<!ENTITY cmd.show.label "Otevřít složku">
+<!ENTITY cmd.retry.label "Opakovat">
+<!ENTITY cmd.goToDownloadPage.label "Přejít na stránku původu">
+<!ENTITY cmd.copyDownloadLink.label "Zkopírovat odkaz pro stažení">
+<!ENTITY cmd.removeFromHistory.label "Odstranit z historie">
+<!ENTITY cmd.select.all.label "Vybrat vše">
+<!ENTITY cmd.delete.label "Smazat z počítače">
+<!ENTITY cmd.open.label "Otevřít">
+<!ENTITY cmd.copy.label "Kopírovat">
+<!ENTITY cmd.trackers.label "Change trackers">
+<!ENTITY cmd.save.metadata.label "Save metadata torrent file">
+
+<!ENTITY fromTip.label "From:">
+<!ENTITY toTip.label "To:">
+<!ENTITY sizeTip.label "File Size:">
+<!ENTITY percentTip.label "Percent Done:">
+<!ENTITY avgSpeedTip.label "Average Speed:">
+<!ENTITY timeTip.label "Time Left:">
+
+<!ENTITY downloadsLibrary.TorrentName.label "Název">
+<!ENTITY downloadsLibrary.SaveDir.label "Složka stahování">
+<!ENTITY downloadsLibrary.Size.label "Velikost">
+<!ENTITY downloadsLibrary.DateTime.label "Datum">
+<!ENTITY downloadsLibrary.URL.label "URL">
+<!ENTITY downloadsLibrary.Progress.label "Postup">
+<!ENTITY downloadsLibrary.TimeRemaining.label "Zbývající čas">
+<!ENTITY downloadsLibrary.Peers.label "Peers">
+<!ENTITY downloadsLibrary.Speed.label "Rychlost">
+<!ENTITY downloadsLibrary.Percent.label "&#037;">
+<!ENTITY downloadsLibrary.Info.label "Obecné informace">
+
+<!ENTITY downloadsLibrary.TorrentInfo.Files.label "Soubory">
+<!ENTITY downloadsLibrary.TorrentInfo.FileName.label "Název souboru">
+<!ENTITY downloadsLibrary.TorrentInfo.Address.label "Adresa">
+<!ENTITY downloadsLibrary.TorrentInfo.Client.label "Název klienta">
+<!ENTITY downloadsLibrary.TorrentInfo.MagnetLink.label "Magnet link">
+<!ENTITY downloadsLibrary.TorrentInfo.FilesCount.label "Počet souborů">
+<!ENTITY downloadsLibrary.TorrentInfo.Hash.label "Hash">
+<!ENTITY downloadsLibrary.TorrentInfo.Publisher.label "Vydavatel">
+<!ENTITY downloadsLibrary.TorrentInfo.PublisherUrl.label "Web vydavatele">
+<!ENTITY downloadsLibrary.TorrentInfo.Created.label "Vytvořeno">
+<!ENTITY downloadsLibrary.TorrentInfo.Comment.label "Komentář">
+<!ENTITY downloadsLibrary.TorrentInfo.Error.label "Chyba">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadPage.label "Stránka původu">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadLink.label "Odkaz ke stažení">
+<!ENTITY downloadsLibrary.TorrentInfo.Trackers.label "Trackery">
+
+<!ENTITY pShowButtons.label "Zobrazit tato tlačítka:">
+<!ENTITY pSwitchDownloadsTab.label "Automaticky přepnout na tab Torrent Tornado při začátku stahování">
+<!ENTITY pDateTimeFormat.label "Formát data:">
+<!ENTITY pDefaultSaveDir.label "Výchozí složka pro stahování:">
+<!ENTITY pDefaultSelectDir.label "Vybrat">
+<!ENTITY pDefaultSaveDirReset.label "Reset">
+<!ENTITY pMaximumNumberPeers.label "Maximální počet peerů (nanejvýše 500):">
+<!ENTITY pMagnetURIassociation.label "Asociace s magnet linky">
+<!ENTITY pTorrentFileTypeAssociation.label "Asociace se soubory typu .torrent">
+<!ENTITY pDataMaxBuffer.label "Největší velikost cache paměti:">
+<!ENTITY pDataMaxBufferMB.label "MB">
+<!ENTITY pQuicklyStartDownload.label "Rychlý začátek stahování (přeskočit všechny kroky průvodce)">
+<!ENTITY pShowCounterToolbarbutton.label "Show counter on the toolbar button">
+<!ENTITY pDisableNotifications.label "Disable notifications">
+<!ENTITY pSpeedLimitAll.label "Maximum download speed (total):">
+<!ENTITY pSpeedLimitOne.label "Maximum download speed (single torrent):">
+<!ENTITY pSpeedLimitDescription.label "* The lower the value, the greater the deviation; 0 = unlimited">
+<!ENTITY pSpeedLimitAbbr.label "KB/s">
+
+<!ENTITY pGeneralTab.label "General">

@@ -1,42 +1,38 @@
 <?xml version="1.0"?>
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://s3torrent/skin/settings.css" type="text/css"?>
+<?xml-stylesheet href="chrome://magdown/skin/settings.css" type="text/css"?>
 <!DOCTYPE window [
-	<!ENTITY % s3torrentDTD SYSTEM "chrome://s3torrent/locale/s3torrent.dtd" >
-	%s3torrentDTD;
-	<!ENTITY % advertisementDTD SYSTEM "chrome://s3torrent/locale/advertisement.dtd" >
-	%advertisementDTD;
+	<!ENTITY % magdownDTD SYSTEM "chrome://magdown/locale/magdown.dtd" >
+	%magdownDTD;
 ]>
 
-<prefwindow id="s3torrent_prefs" title="&title.label; - &settings.label;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" onload="s3torrent.init();">
-	<script type="application/x-javascript" src="chrome://s3torrent/content/settings.js"/>
+<prefwindow id="magdown_prefs" title="&title.label; - &settings.label;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" onload="magdown.init();">
+	<script type="application/x-javascript" src="chrome://magdown/content/settings.js"/>
 
-	<prefpane id="s3torrent_pref_pane">
+	<prefpane id="magdown_pref_pane">
 		<preferences>
-	    		<preference id="pref_default_save_dir" name="extensions.s3torrent.torrent.default_save_dir" type="string" />
-	    		<preference id="pref_quickly_start_download" name="extensions.s3torrent.torrent.quickly_start_download" type="bool" />
-			<preference id="pref_peer_max_count" name="extensions.s3torrent.torrent.peer_max_count" type="int" />
-			<preference id="pref_data_max_buffer" name="extensions.s3torrent.torrent.data_max_buffer" type="int" />
-			<preference id="pref_speed_limit_all" name="extensions.s3torrent.torrent.speed_limit_all" type="int" />
-			<preference id="pref_speed_limit_one" name="extensions.s3torrent.torrent.speed_limit_one" type="int" />
-	    		<preference id="pref_showAddNewTorrent" name="extensions.s3torrent.DL.showAddNewTorrent" type="bool" />
-	    		<preference id="pref_showPauseButton" name="extensions.s3torrent.DL.showPauseButton" type="bool" />
-	    		<preference id="pref_showResumeButton" name="extensions.s3torrent.DL.showResumeButton" type="bool" />
-	    		<preference id="pref_showCancelButton" name="extensions.s3torrent.DL.showCancelButton" type="bool" />
-	    		<preference id="pref_showRemoveButton" name="extensions.s3torrent.DL.showRemoveButton" type="bool" />
-	    		<preference id="pref_switchDownloadsTab" name="extensions.s3torrent.DL.switchDownloadsTab" type="bool" />
-	    		<preference id="pref_dateTimeFormat" name="extensions.s3torrent.DL.dateTimeFormat" type="string" />
-	    		<preference id="pref_magnet_uri_association" name="extensions.s3torrent.magnet_uri_association" type="bool" />
-	    		<preference id="pref_torrent_file_association" name="extensions.s3torrent.torrent_file_association" type="bool" />
-	    		<preference id="pref_show_counter_in_toolbarbutton" name="extensions.s3torrent.show_counter_in_toolbarbutton" type="bool" />
-	    		<preference id="pref_disable_notifications" name="extensions.s3torrent.disable_notifications" type="bool" />
-	    		<preference id="pref_advertisement" name="extensions.s3torrent.advertisement" type="string" />
+	    		<preference id="pref_default_save_dir" name="extensions.magdown.torrent.default_save_dir" type="string" />
+	    		<preference id="pref_quickly_start_download" name="extensions.magdown.torrent.quickly_start_download" type="bool" />
+			<preference id="pref_peer_max_count" name="extensions.magdown.torrent.peer_max_count" type="int" />
+			<preference id="pref_data_max_buffer" name="extensions.magdown.torrent.data_max_buffer" type="int" />
+			<preference id="pref_speed_limit_all" name="extensions.magdown.torrent.speed_limit_all" type="int" />
+			<preference id="pref_speed_limit_one" name="extensions.magdown.torrent.speed_limit_one" type="int" />
+	    		<preference id="pref_showAddNewTorrent" name="extensions.magdown.DL.showAddNewTorrent" type="bool" />
+	    		<preference id="pref_showPauseButton" name="extensions.magdown.DL.showPauseButton" type="bool" />
+	    		<preference id="pref_showResumeButton" name="extensions.magdown.DL.showResumeButton" type="bool" />
+	    		<preference id="pref_showCancelButton" name="extensions.magdown.DL.showCancelButton" type="bool" />
+	    		<preference id="pref_showRemoveButton" name="extensions.magdown.DL.showRemoveButton" type="bool" />
+	    		<preference id="pref_switchDownloadsTab" name="extensions.magdown.DL.switchDownloadsTab" type="bool" />
+	    		<preference id="pref_dateTimeFormat" name="extensions.magdown.DL.dateTimeFormat" type="string" />
+	    		<preference id="pref_magnet_uri_association" name="extensions.magdown.magnet_uri_association" type="bool" />
+	    		<preference id="pref_torrent_file_association" name="extensions.magdown.torrent_file_association" type="bool" />
+	    		<preference id="pref_show_counter_in_toolbarbutton" name="extensions.magdown.show_counter_in_toolbarbutton" type="bool" />
+	    		<preference id="pref_disable_notifications" name="extensions.magdown.disable_notifications" type="bool" />
 		</preferences>
 
-		<tabbox id="s3torrent_preference_tabbox">
+		<tabbox id="magdown_preference_tabbox">
 			<tabs>
 				<tab label="&pGeneralTab.label;"/>
-				<tab label="&adv_title.label;"/>
 			</tabs>
 			<tabpanels>
 				<tabpanel id="generalTab">
@@ -46,8 +42,8 @@
 						<label value="&pDefaultSaveDir.label;"/>
 						<hbox align="center">
 							<textbox disabled="true" preference="pref_default_save_dir" id="default_save_dir" size="50" />
-							<button label="&pDefaultSelectDir.label;" oncommand="s3torrent.select_dir();"/>
-							<button label="&pDefaultSaveDirReset.label;" oncommand="s3torrent.reset_dir();"/>
+							<button label="&pDefaultSelectDir.label;" oncommand="magdown.select_dir();"/>
+							<button label="&pDefaultSaveDirReset.label;" oncommand="magdown.reset_dir();"/>
 						</hbox>
 						<checkbox label="&pQuicklyStartDownload.label;" id="quickly_start_download" preference="pref_quickly_start_download"/>
 						</vbox>
@@ -118,14 +114,6 @@
 						<hbox height="10" flex="1"/>
 						</vbox>
 					</groupbox>
-					</vbox>
-				</tabpanel>
-				<tabpanel id="advertisementTab">
-					<vbox>
-						<label id="adv_is_enabled" style="border: none;" value="&adv_is_enabled.label;"/>
-						<label id="adv_customization" style="border: none;" class="text-link" href="http://thisadsfor.us/optout?t=210&amp;u=49499&amp;key=d27a5d5aa528b6d91d" value="&adv_customization.label;"/>
-						<label id="adv_is_disabled" value="&adv_is_disabled.label;"/>
-						<button label="&adv_change_status.label;" oncommand="s3torrent.advertisement();"/>
 					</vbox>
 				</tabpanel>
 			</tabpanels>

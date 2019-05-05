@@ -1,0 +1,91 @@
+<!ENTITY title.label "MagDown">
+<!ENTITY open.torrent.history.label "Історія завантажень">
+<!ENTITY settings.label "Налаштування">
+<!ENTITY add.new.torrent.label "Додати новий торрент">
+
+<!ENTITY new.torrent.selector.url.label "URL (http, ftp, magnet) або Хеш">
+<!ENTITY new.torrent.selector.file.label "Файл">
+<!ENTITY new.torrent.selector.file.open.label "Відкрити файл">
+<!ENTITY new.torrent.selector.file.list.label "Список файлов">
+<!ENTITY new.torrent.next.step.label "Наступний крок">
+<!ENTITY new.torrent.prev.step.label "Попередній крок">
+<!ENTITY new.torrent.skip.step.label "Старт!">
+<!ENTITY new.torrent.skip.step.later.label "Скачать позже">
+<!ENTITY new.torrent.privacywarn1.label "Попередження: MagDown не використовує зашифровані з'єднання і може ">
+<!ENTITY new.torrent.privacywarn2.label "обходити проксі. Будь ласка, розгляньте можливість використання VPN.">
+
+<!ENTITY cmd.stop.all.label "Зупинити всі завантаження">
+<!ENTITY cmd.resume.all.label "Відновити всі завантаження">
+<!ENTITY cmd.cancel.all.label "Скасувати всі поточні завантаження">
+<!ENTITY cmd.remove.all.label "Видалити всі завершені завантаження">
+
+<!ENTITY cmd.pause.label "Призупинити">
+<!ENTITY cmd.resume.label "Відновити">
+<!ENTITY cmd.cancel.label "Скасувати">
+<!ENTITY cmd.show.label "Відкрити теку з файлом">
+<!ENTITY cmd.retry.label "Повторити">
+<!ENTITY cmd.goToDownloadPage.label "Перейти на сторінку завантаження">
+<!ENTITY cmd.copyDownloadLink.label "Копіювати посилання на завантаження">
+<!ENTITY cmd.removeFromHistory.label "Видалити з історії">
+<!ENTITY cmd.select.all.label "Виділити все">
+<!ENTITY cmd.delete.label "Видалити з системи">
+<!ENTITY cmd.open.label "Відкрити">
+<!ENTITY cmd.copy.label "Копіювати">
+<!ENTITY cmd.trackers.label "Изменить трекеры">
+<!ENTITY cmd.save.metadata.label "Сохранить метаданные торрент-файла">
+
+<!ENTITY fromTip.label "Звідки:">
+<!ENTITY toTip.label "Куди:">
+<!ENTITY sizeTip.label "Розмір файлу:">
+<!ENTITY percentTip.label "Стан завантаження:">
+<!ENTITY avgSpeedTip.label "Середня швидкість:">
+<!ENTITY timeTip.label "Залишилось часу:">
+
+<!ENTITY downloadsLibrary.TorrentName.label "Назва">
+<!ENTITY downloadsLibrary.SaveDir.label "Тека зберігання">
+<!ENTITY downloadsLibrary.Size.label "Розмір">
+<!ENTITY downloadsLibrary.DateTime.label "Дата">
+<!ENTITY downloadsLibrary.URL.label "URL">
+<!ENTITY downloadsLibrary.Progress.label "Стан">
+<!ENTITY downloadsLibrary.TimeRemaining.label "Залишилось часу">
+<!ENTITY downloadsLibrary.Peers.label "Піри">
+<!ENTITY downloadsLibrary.Speed.label "Швидкість">
+<!ENTITY downloadsLibrary.Percent.label "&#037;">
+<!ENTITY downloadsLibrary.Info.label "Загальна інформація">
+
+<!ENTITY downloadsLibrary.TorrentInfo.Files.label "Файли">
+<!ENTITY downloadsLibrary.TorrentInfo.FileName.label "Ім'я файла">
+<!ENTITY downloadsLibrary.TorrentInfo.Address.label "Адреса">
+<!ENTITY downloadsLibrary.TorrentInfo.Client.label "Клієнт">
+<!ENTITY downloadsLibrary.TorrentInfo.MagnetLink.label "Magnet-посилання">
+<!ENTITY downloadsLibrary.TorrentInfo.FilesCount.label "Кількість файлів">
+<!ENTITY downloadsLibrary.TorrentInfo.Hash.label "Хеш">
+<!ENTITY downloadsLibrary.TorrentInfo.Publisher.label "Видавець">
+<!ENTITY downloadsLibrary.TorrentInfo.PublisherUrl.label "Видавець (посилання)">
+<!ENTITY downloadsLibrary.TorrentInfo.Created.label "Створений">
+<!ENTITY downloadsLibrary.TorrentInfo.Comment.label "Коментар">
+<!ENTITY downloadsLibrary.TorrentInfo.Error.label "Помилка">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadPage.label "Сторінка завантаження">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadLink.label "Посилання на завантаження">
+<!ENTITY downloadsLibrary.TorrentInfo.Trackers.label "Трекери">
+
+<!ENTITY pShowButtons.label "Відображати наступні кнопки:">
+<!ENTITY pSwitchDownloadsTab.label "Перемикатися на вкладку завантажень на початку завантаження">
+<!ENTITY pDateTimeFormat.label "Формат дати:">
+<!ENTITY pDefaultSaveDir.label "Стандартна тека для збереження:">
+<!ENTITY pDefaultSelectDir.label "Огляд">
+<!ENTITY pDefaultSaveDirReset.label "Скинути">
+<!ENTITY pMaximumNumberPeers.label "Максимальна кількість пірів (максимум 500):">
+<!ENTITY pMagnetURIassociation.label "Асоціаціювати з magnet-посиланнями">
+<!ENTITY pTorrentFileTypeAssociation.label "Асоціаціювати з .torrent файлами">
+<!ENTITY pDataMaxBuffer.label "Максимальний розмір буфера пам'яті:">
+<!ENTITY pDataMaxBufferMB.label "MB">
+<!ENTITY pQuicklyStartDownload.label "Розпочинати завантаження без використання помічника">
+<!ENTITY pShowCounterToolbarbutton.label "Отображать счетчик на кнопке тулбара">
+<!ENTITY pDisableNotifications.label "Отключить уведомления">
+<!ENTITY pSpeedLimitAll.label "Максимальная скорость скачивания (общая):">
+<!ENTITY pSpeedLimitOne.label "Максимальная скорость скачивания (отдельный торрент):">
+<!ENTITY pSpeedLimitDescription.label "* чем меньше значение, тем больше погрешность; 0 = безлимит">
+<!ENTITY pSpeedLimitAbbr.label "Кб/сек">
+
+<!ENTITY pGeneralTab.label "Основное">

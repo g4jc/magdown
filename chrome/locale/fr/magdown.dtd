@@ -1,0 +1,91 @@
+<!ENTITY title.label "MagDown">
+<!ENTITY open.torrent.history.label "Historique des téléchargements">
+<!ENTITY settings.label "Paramètres">
+<!ENTITY add.new.torrent.label "Ajouter un nouveau torrent">
+
+<!ENTITY new.torrent.selector.url.label "URL (HTTP, FTP, Magnet) ou empreinte">
+<!ENTITY new.torrent.selector.file.label "Fichier">
+<!ENTITY new.torrent.selector.file.open.label "Ouvrir le fichier">
+<!ENTITY new.torrent.selector.file.list.label "Liste de fichiers">
+<!ENTITY new.torrent.next.step.label "Prochaine étape">
+<!ENTITY new.torrent.prev.step.label "Étape précédente">
+<!ENTITY new.torrent.skip.step.label "Démarrer !">
+<!ENTITY new.torrent.skip.step.later.label "Télécharger plus tard">
+<!ENTITY new.torrent.privacywarn1.label "Avertissement: MagDown n'utilise pas de connexions cryptées et peut">
+<!ENTITY new.torrent.privacywarn2.label "contourner le proxy. S'il vous plaît envisager d'utiliser un VPN.">
+
+<!ENTITY cmd.stop.all.label "Arrêter tous les téléchargements">
+<!ENTITY cmd.resume.all.label "Reprendre tous les téléchargements">
+<!ENTITY cmd.cancel.all.label "Annuler tous les téléchargements en cours">
+<!ENTITY cmd.remove.all.label "Effacer tous les téléchargement terminés">
+
+<!ENTITY cmd.pause.label "Pause">
+<!ENTITY cmd.resume.label "Reprendre">
+<!ENTITY cmd.cancel.label "Annuler">
+<!ENTITY cmd.show.label "Ouvrir l'emplacement du fichier">
+<!ENTITY cmd.retry.label "Réessayer">
+<!ENTITY cmd.goToDownloadPage.label "Aller à la page d'origine du téléchargement">
+<!ENTITY cmd.copyDownloadLink.label "Copier l'adresse du lien de téléchargement">
+<!ENTITY cmd.removeFromHistory.label "Effacer de l'historique">
+<!ENTITY cmd.select.all.label "Tout sélectionner">
+<!ENTITY cmd.delete.label "Supprimer du système">
+<!ENTITY cmd.open.label "Ouvrir">
+<!ENTITY cmd.copy.label "Copier">
+<!ENTITY cmd.trackers.label "Modifier les serveurs de pair à pair">
+<!ENTITY cmd.save.metadata.label "Enregistrer les métadonnées dans le fichier torrent">
+
+<!ENTITY fromTip.label "Depuis :">
+<!ENTITY toTip.label "Vers :">
+<!ENTITY sizeTip.label "Taille du fichier :">
+<!ENTITY percentTip.label "Pourcentage accompli :">
+<!ENTITY avgSpeedTip.label "Vitesse moyenne :">
+<!ENTITY timeTip.label "Temps restant :">
+
+<!ENTITY downloadsLibrary.TorrentName.label "Nom">
+<!ENTITY downloadsLibrary.SaveDir.label "Dossier d'enregistrement">
+<!ENTITY downloadsLibrary.Size.label "Taille">
+<!ENTITY downloadsLibrary.DateTime.label "Date">
+<!ENTITY downloadsLibrary.URL.label "URL">
+<!ENTITY downloadsLibrary.Progress.label "Progression">
+<!ENTITY downloadsLibrary.TimeRemaining.label "Temps restant">
+<!ENTITY downloadsLibrary.Peers.label "Pairs">
+<!ENTITY downloadsLibrary.Speed.label "Vitesse">
+<!ENTITY downloadsLibrary.Percent.label "&#037;">
+<!ENTITY downloadsLibrary.Info.label "Informations générales">
+
+<!ENTITY downloadsLibrary.TorrentInfo.Files.label "Fichiers">
+<!ENTITY downloadsLibrary.TorrentInfo.FileName.label "Nom de fichier">
+<!ENTITY downloadsLibrary.TorrentInfo.Address.label "Adresse">
+<!ENTITY downloadsLibrary.TorrentInfo.Client.label "Nom du client">
+<!ENTITY downloadsLibrary.TorrentInfo.MagnetLink.label "Lien Magnet">
+<!ENTITY downloadsLibrary.TorrentInfo.FilesCount.label "Nombre de fichiers">
+<!ENTITY downloadsLibrary.TorrentInfo.Hash.label "Empreinte">
+<!ENTITY downloadsLibrary.TorrentInfo.Publisher.label "Éditeur">
+<!ENTITY downloadsLibrary.TorrentInfo.PublisherUrl.label "Éditeur (URL)">
+<!ENTITY downloadsLibrary.TorrentInfo.Created.label "Créé le">
+<!ENTITY downloadsLibrary.TorrentInfo.Comment.label "Commentaire">
+<!ENTITY downloadsLibrary.TorrentInfo.Error.label "Erreur">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadPage.label "Page de téléchargement">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadLink.label "Lien de téléchargement">
+<!ENTITY downloadsLibrary.TorrentInfo.Trackers.label "Serveurs de pair à pair">
+
+<!ENTITY pShowButtons.label "Afficher ces boutons :">
+<!ENTITY pSwitchDownloadsTab.label "Basculer vers l'onglet des téléchargements au démarrage d'un téléchargement">
+<!ENTITY pDateTimeFormat.label "Format de la date :">
+<!ENTITY pDefaultSaveDir.label "Dossier d'enregistrement par défaut :">
+<!ENTITY pDefaultSelectDir.label "Sélectionner">
+<!ENTITY pDefaultSaveDirReset.label "Réinitialiser">
+<!ENTITY pMaximumNumberPeers.label "Nombre maximum de pairs (500 au plus) :">
+<!ENTITY pMagnetURIassociation.label "Association Magnet-URI">
+<!ENTITY pTorrentFileTypeAssociation.label "Association du type de fichier .torrent">
+<!ENTITY pDataMaxBuffer.label "Taille maximale du cache mémoire :">
+<!ENTITY pDataMaxBufferMB.label "Mio">
+<!ENTITY pQuicklyStartDownload.label "Démarrage rapide des téléchargements (débute le téléchargement en sautant toutes les étapes de l'assistant)">
+<!ENTITY pShowCounterToolbarbutton.label "Afficher un compteur sur le bouton de barre d'outils">
+<!ENTITY pDisableNotifications.label "Désactiver les notifications">
+<!ENTITY pSpeedLimitAll.label "Vitesse de téléchargement maximale (total) :">
+<!ENTITY pSpeedLimitOne.label "Vitesse de téléchargement maximale (simple torrent) :">
+<!ENTITY pSpeedLimitDescription.label "* Plus basse est la valeur, plus grande est la restriction ; 0 = illimité">
+<!ENTITY pSpeedLimitAbbr.label "Kio/s environ">
+
+<!ENTITY pGeneralTab.label "Général">

@@ -1,14 +1,14 @@
 this.EXPORTED_SYMBOLS = [ "Peer" ];
 
-var s3torrent = {};
-Components.utils.import("resource://s3torrent/bencode.js", s3torrent);
-Components.utils.import("resource://s3torrent/buffer.js", s3torrent);
-Components.utils.import("resource://s3torrent/utils.js", s3torrent);
-Components.utils.import("resource://s3torrent/digest.js", s3torrent);
-Components.utils.import("resource://s3torrent/TCPSocket.js", s3torrent);
+var magdown = {};
+Components.utils.import("resource://magdown/bencode.js", magdown);
+Components.utils.import("resource://magdown/buffer.js", magdown);
+Components.utils.import("resource://magdown/utils.js", magdown);
+Components.utils.import("resource://magdown/digest.js", magdown);
+Components.utils.import("resource://magdown/TCPSocket.js", magdown);
 
 //-----------------------------------------------------------------------------------
-s3torrent.Peer = function(torrent, peer_key, protocol) {
+magdown.Peer = function(torrent, peer_key, protocol) {
 	this.torrent = torrent;
 	this.peer_key = peer_key;
 	this.tcpSocket = null;
@@ -30,7 +30,7 @@ s3torrent.Peer = function(torrent, peer_key, protocol) {
 	this.peer_timeout_count = 5000;
 	this.download_speed = 0;
 	this.download_speed_data = [];
-	this.buffer_read = new s3torrent.Buffer();
+	this.buffer_read = new magdown.Buffer();
 	this.is_get_magnet = false;
 	this.is_get_magnet_count = 0;
 	this.request_count = -1;
@@ -44,21 +44,21 @@ s3torrent.Peer = function(torrent, peer_key, protocol) {
 //	this.set_timeout();
 }
 
-this.Peer = s3torrent.Peer;
+this.Peer = magdown.Peer;
 
 //-----------------------------------------------------------------------------------
-s3torrent.Peer.prototype = {
+magdown.Peer.prototype = {
 	//-----------------------------------------------------------------------------
 	set_timeout : function() {
 		this.clear_timeout();
 		var _this = this;
-		this.peer_timeout = s3torrent.utils.setTimeout(function() { _this.socket_close(false); }, this.peer_timeout_count);
+		this.peer_timeout = magdown.utils.setTimeout(function() { _this.socket_close(false); }, this.peer_timeout_count);
 		return;
 	},
 	//-----------------------------------------------------------------------------
 	clear_timeout : function() {
 		if (this.peer_timeout != null) {
-			s3torrent.utils.clearTimeout(this.peer_timeout);
+			magdown.utils.clearTimeout(this.peer_timeout);
 			this.peer_timeout = null;
 		}
 	},
@@ -67,18 +67,18 @@ s3torrent.Peer.prototype = {
 		var _this = this;
 		this.buffer_check();
 		this.make_request();
-		this.peer_interval = s3torrent.utils.setTimeout(function() { _this.check_interval(true); }, 500);
+		this.peer_interval = magdown.utils.setTimeout(function() { _this.check_interval(true); }, 500);
 	},
 	//-----------------------------------------------------------------------------
 	clear_interval : function() {
 		if (this.peer_interval != null) {
-			s3torrent.utils.clearTimeout(this.peer_interval);
+			magdown.utils.clearTimeout(this.peer_interval);
 			this.peer_interval = null;
 		}
 	},
 	//-----------------------------------------------------------------------------
 	get_info : function() {
-		[ this.download_speed, this.download_speed_data ] = s3torrent.utils.calculate_speed(this.download_speed_data);
+		[ this.download_speed, this.download_speed_data ] = magdown.utils.calculate_speed(this.download_speed_data);
 
 		var info = {
 			'peer_ip_port' : this.peer_key,
@@ -228,7 +228,7 @@ s3torrent.Peer.prototype = {
 				this.on_PIECE(payload);
 				break; 
 			default:
-				s3torrent.utils.console_log('= S3.Torrent => unknown type : ' + type);
+				magdown.utils.console_log('= S3.Torrent => unknown type : ' + type);
 				break;
 		}
 		payload = null;
@@ -263,7 +263,7 @@ s3torrent.Peer.prototype = {
 		var _this = this;
 		this.callback = callback;
 //		var baseSocket = Components.classes["@mozilla.org/tcp-socket;1"].createInstance(Components.interfaces.nsIDOMTCPSocket);
-		var baseSocket = new s3torrent.TCPSocket();
+		var baseSocket = new magdown.TCPSocket();
 		this.tcpSocket = baseSocket.open(ip, port, { binaryType: 'arraybuffer' });
 		this.socket_open = true;
 		this.tcpSocket.onopen = function(e) { _this.send_handshake(e); }
@@ -286,7 +286,7 @@ s3torrent.Peer.prototype = {
 		}
 		bytes = bytes.concat( this.protocol.handshake_flags );
 		bytes = bytes.concat( this.torrent.metadata.hashbytes );
-		bytes = bytes.concat( s3torrent.utils.get_peerid_bytes() );
+		bytes = bytes.concat( magdown.utils.get_peerid_bytes() );
 		var payload = new Uint8Array( bytes ).buffer;
 		this.peer_is_start = true;
 		this.socket_send(payload);
@@ -304,7 +304,7 @@ s3torrent.Peer.prototype = {
 			data.metadata_size = this.torrent.metadata.info_buffer.byteLength;
 		}
 
-		var arr = new Uint8Array(s3torrent.bencode.encode( data )).buffer;
+		var arr = new Uint8Array(magdown.bencode.encode( data )).buffer;
 		var payload = this.set_payload('UTORRENT_MSG', [new Uint8Array([0]).buffer, arr]);
 		this.socket_send(payload);
 	},
@@ -332,7 +332,7 @@ s3torrent.Peer.prototype = {
 	},
 	//-----------------------------------------------------------------------------
 	send_request_pieces: function() {
-		this.percent = s3torrent.utils.calculate_percent(this.piece_have)
+		this.percent = magdown.utils.calculate_percent(this.piece_have)
 		if ((this.request_count >= 0) && this.request_check) {
 			return;
 		}
@@ -382,7 +382,7 @@ s3torrent.Peer.prototype = {
 		var v = new DataView(buf, 0, 1);
 		sofar += 1;
 		if (v.getUint8(0) == this.protocol.protocol_name.length) {
-			if (s3torrent.utils.ui82str( new Uint8Array(buf, 1, this.protocol.protocol_name.length) ) == this.protocol.protocol_name) {
+			if (magdown.utils.ui82str( new Uint8Array(buf, 1, this.protocol.protocol_name.length) ) == this.protocol.protocol_name) {
 				try {
 					sofar += this.protocol.protocol_name.length;
 					var reserved = new Uint8Array(buf,sofar,8); // reserved bytes
@@ -390,8 +390,8 @@ s3torrent.Peer.prototype = {
 					var infohash = new Uint8Array(buf,sofar,20); // infohash
 					sofar += 20;
 					this.peer_client_id = new Uint8Array(buf,sofar,20); // peer id
-					this.peer_client_name = s3torrent.utils.get_peerclient_name(s3torrent.utils.ui82str(this.peer_client_id));
-					if (s3torrent.utils.bytes_to_hex_string(s3torrent.utils.ui82str(infohash)) == this.torrent.metadata.hashhexlower) {
+					this.peer_client_name = magdown.utils.get_peerclient_name(magdown.utils.ui82str(this.peer_client_id));
+					if (magdown.utils.bytes_to_hex_string(magdown.utils.ui82str(infohash)) == this.torrent.metadata.hashhexlower) {
 						this.peer_is_handshake = true;
 						if (readResult.data.byteLength > this.protocol.handshake_length) {
 							var data = buf.slice(this.protocol.handshake_length);
@@ -422,7 +422,7 @@ s3torrent.Peer.prototype = {
 		//-- client_name
 		//-----------------------------------------------------------------------
 		if (msg_code == 0) {
-			var handshake_ext = s3torrent.bencode.decode(s3torrent.utils.ui82str(new Uint8Array(payload, 6)), { utf8:true });
+			var handshake_ext = magdown.bencode.decode(magdown.utils.ui82str(new Uint8Array(payload, 6)), { utf8:true });
 			if (handshake_ext.v) {
 				this.peer_client_name = handshake_ext.v;
 			}
@@ -439,7 +439,7 @@ s3torrent.Peer.prototype = {
 						'total_size' : metadata_size
 					};
 					var code = handshake_ext.m.ut_metadata;
-					var payload_send = this.set_payload('UTORRENT_MSG', [new Uint8Array([code]).buffer, new Uint8Array(s3torrent.bencode.encode(d)).buffer]);
+					var payload_send = this.set_payload('UTORRENT_MSG', [new Uint8Array([code]).buffer, new Uint8Array(magdown.bencode.encode(d)).buffer]);
 					this.socket_send(payload_send);
 				}
 			}
@@ -448,9 +448,9 @@ s3torrent.Peer.prototype = {
 		//-- ut_metadata
 		//-----------------------------------------------------------------------
 		else if ((msg_code == 2) && (this.is_get_magnet)) {
-			var ext_message = s3torrent.bencode.decode(s3torrent.utils.ui82str(new Uint8Array(payload, 6)));
+			var ext_message = magdown.bencode.decode(magdown.utils.ui82str(new Uint8Array(payload, 6)));
 			if (ext_message.msg_type == 1) {
-				var data_start_idx = s3torrent.bencode.encode(ext_message).length;
+				var data_start_idx = magdown.bencode.encode(ext_message).length;
 				var infodict_chunk_data = new Uint8Array(payload, 6 + data_start_idx);
 				var infodict_chunk_num = ext_message.piece;
 				this.metadata_response_list[infodict_chunk_num] = infodict_chunk_data;
@@ -468,8 +468,8 @@ s3torrent.Peer.prototype = {
 						b.set( data, idx );
 						idx += data.byteLength;
 					}
-					var infodict = s3torrent.bencode.decode(s3torrent.utils.ui82str(b), { utf8:true });
-					var sha1_hash = s3torrent.digest.checksum_buffer([s3torrent.bencode.encode(infodict)], 'SHA1');
+					var infodict = magdown.bencode.decode(magdown.utils.ui82str(b), { utf8:true });
+					var sha1_hash = magdown.digest.checksum_buffer([magdown.bencode.encode(infodict)], 'SHA1');
 					if (sha1_hash.text == this.torrent.metadata.hashhexlower) {
 						this.torrent.metadata.info = infodict;
 						this.socket_close(true);
@@ -483,7 +483,7 @@ s3torrent.Peer.prototype = {
 		//-- ut_pex
 		//-----------------------------------------------------------------------
 		else if (msg_code == 3) {
-			var ext_message = s3torrent.bencode.decode(s3torrent.utils.ui82str(new Uint8Array(payload, 6)));
+			var ext_message = magdown.bencode.decode(magdown.utils.ui82str(new Uint8Array(payload, 6)));
 			if (ext_message.added) {
 				var peer_data = ext_message.added;
 				var num_peers = peer_data.length/6;
@@ -503,14 +503,14 @@ s3torrent.Peer.prototype = {
 	on_HAVE: function(payload) {
 		var idx = new DataView(payload,5,4).getUint32(0);
 		this.piece_have['piece_' + idx] = 1;
-		this.peer_percent = s3torrent.utils.calculate_percent(this.piece_have);
+		this.peer_percent = magdown.utils.calculate_percent(this.piece_have);
 	},
 	//-----------------------------------------------------------------------------
 	on_HAVE_ALL: function(payload) {
 		for (var i =0; i<this.torrent.metadata.piece_count; i++) {
 			this.piece_have['piece_' + i] = 1;
 		}
-		this.peer_percent = s3torrent.utils.calculate_percent(this.piece_have);
+		this.peer_percent = magdown.utils.calculate_percent(this.piece_have);
 	},
 	//-----------------------------------------------------------------------------
 	on_BITFIELD: function(payload) {
@@ -526,7 +526,7 @@ s3torrent.Peer.prototype = {
 				idx++;
 			}
 		}
-		this.peer_percent = s3torrent.utils.calculate_percent(this.piece_have);
+		this.peer_percent = magdown.utils.calculate_percent(this.piece_have);
 		if (this.peer_percent == 0) {
 			this.socket_close(false);
 		}
@@ -544,7 +544,7 @@ s3torrent.Peer.prototype = {
 		if ((result && result.chunk_size == data.byteLength)) {
 			result.end_time = new Date().getTime();
 			var download_time = result.end_time - result.start_time;
-			[ this.download_speed, this.download_speed_data ] = s3torrent.utils.calculate_speed(this.download_speed_data, result);
+			[ this.download_speed, this.download_speed_data ] = magdown.utils.calculate_speed(this.download_speed_data, result);
 			is_done = true;
 			this.peer_is_request = true;
 		} else {

@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
-<!DOCTYPE overlay SYSTEM "chrome://s3torrent/locale/s3torrent.dtd">
+<!DOCTYPE overlay SYSTEM "chrome://magdown/locale/magdown.dtd">
 <?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
-<?xml-stylesheet href="chrome://s3torrent/skin/s3torrent.css" type="text/css"?>
+<?xml-stylesheet href="chrome://magdown/skin/magdown.css" type="text/css"?>
 
-<dialog title="&title.label;" id="s3torrent_confirm_ex" 
+<dialog title="&title.label;" id="magdown_confirm_ex" 
 	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
 	buttons="extra2,extra1,cancel" 
 	buttonlabelextra2="&new.torrent.skip.step.label;"
 	buttonlabelextra1="&new.torrent.skip.step.later.label;"
-	ondialogextra2="s3torrent.extra2(true);"
-	ondialogextra1="s3torrent.extra1(false);">
+	ondialogextra2="magdown.extra2(true);"
+	ondialogextra1="magdown.extra1(false);">
 
-	<script type="application/x-javascript" src="chrome://s3torrent/content/confirm_ex.js"/>
+	<script type="application/x-javascript" src="chrome://magdown/content/confirm_ex.js"/>
 
 	<hbox>
 		<button dlgtype="extra2"/>

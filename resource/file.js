@@ -1,11 +1,11 @@
 this.EXPORTED_SYMBOLS = [ "file" ];
 
-var s3torrent = {};
-s3torrent.file = {};
-this.file = s3torrent.file;
+var magdown = {};
+magdown.file = {};
+this.file = magdown.file;
 
 //-----------------------------------------------------------------------------------
-s3torrent.file.load_data = function(torrent) {
+magdown.file.load_data = function(torrent) {
 	var set_calc = true;
 	var length_data = 0;
 
@@ -15,7 +15,7 @@ s3torrent.file.load_data = function(torrent) {
 			file.status = 'process';
 		}
 		//----------------------------------------------------------------------
-		var file_size = s3torrent.file.get_file_size(torrent, file);
+		var file_size = magdown.file.get_file_size(torrent, file);
 		file.downloaded = file_size;
 		if (file_size < 0) {
 			length_data = -1;
@@ -42,7 +42,7 @@ s3torrent.file.load_data = function(torrent) {
 	return length_data;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.file.save_data = function(torrent, piece_data) {
+magdown.file.save_data = function(torrent, piece_data) {
 	var piece_id = piece_data.piece_id;
 	var length_piece = piece_data.data.byteLength;
 	var length_ofset_piece = piece_id * torrent.metadata.piece_length;
@@ -57,7 +57,7 @@ s3torrent.file.save_data = function(torrent, piece_data) {
 //			file.status = 'done';
 //		}
 		if (((file.length + length_ofset_file) > length_ofset_piece) && (length_piece > 0)) {
-			var result = s3torrent.file.save_file(torrent, file, piece_data, length_ofset_piece, length_ofset_file);
+			var result = magdown.file.save_file(torrent, file, piece_data, length_ofset_piece, length_ofset_file);
 			length_ofset_piece += length_piece - result.length;
 			length_piece = result.length;
 			piece_data.data = result.data;
@@ -71,16 +71,16 @@ s3torrent.file.save_data = function(torrent, piece_data) {
 	return (length_piece >= 0) ? file_count : length_piece;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.file.delete_data = function(torrent, force) {
+magdown.file.delete_data = function(torrent, force) {
 	for (var file of torrent.metadata.file_list) {
 		if (force || (file.status == 'process')) {
-			s3torrent.file.delete_file(torrent, file);
+			magdown.file.delete_file(torrent, file);
 		}
 	}
 	return true;
 }
 //------------------------------------------------------------------------------
-s3torrent.file.save_file = function(torrent, file_data, piece_data, length_ofset_piece, length_ofset_file) {
+magdown.file.save_file = function(torrent, file_data, piece_data, length_ofset_piece, length_ofset_file) {
 	var save_dir = torrent.metadata.save_dir;
 	//-----------------------------------------------------------------------
 	if (file_data.status && ((file_data.status == 'skip') || (file_data.status == 'done'))) {
@@ -114,7 +114,7 @@ s3torrent.file.save_file = function(torrent, file_data, piece_data, length_ofset
 			}
 		}
 	} catch(e) {
-		s3torrent.file.download_error(torrent, 'error.make_file_path', file.path);
+		magdown.file.download_error(torrent, 'error.make_file_path', file.path);
 		return { 'length': -1, 'data': piece_data.data };
 	}
 
@@ -134,13 +134,13 @@ s3torrent.file.save_file = function(torrent, file_data, piece_data, length_ofset
 			piece_data.data = new Uint8Array(piece_data.data.buffer.slice(data_size));
 			return { 'length': piece_data.data.byteLength, 'data': piece_data.data };
 		} else {
-			s3torrent.file.download_error(torrent, 'error.incorrect_file_size', file.path);
+			magdown.file.download_error(torrent, 'error.incorrect_file_size', file.path);
 			return { 'length': -1, 'data': piece_data.data };
 		}
 	}
 	//-----------------------------------------------------------------------
 	if (piece_data.data.byteLength > file.diskSpaceAvailable) {
-		s3torrent.file.download_error(torrent, 'error.out_of_disk_space');
+		magdown.file.download_error(torrent, 'error.out_of_disk_space');
 		return { 'length': -1, 'data': piece_data.data };
 	}
 
@@ -167,14 +167,14 @@ s3torrent.file.save_file = function(torrent, file_data, piece_data, length_ofset
 	}
 	catch(e) {
 		file_is_done = false;
-		s3torrent.file.download_error(torrent, 'error.file_write', file.path);
+		magdown.file.download_error(torrent, 'error.file_write', file.path);
 		return { 'length': -1, 'data': piece_data.data };
 	}
 
 	return { 'length': piece_data.data.byteLength, 'data': piece_data.data, 'file_is_done': file_is_done };
 }
 //------------------------------------------------------------------------------
-s3torrent.file.get_file_size = function(torrent, file_data) {
+magdown.file.get_file_size = function(torrent, file_data) {
 	var save_dir = torrent.metadata.save_dir;
 
 	var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
@@ -202,7 +202,7 @@ s3torrent.file.get_file_size = function(torrent, file_data) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.file.delete_file = function(torrent, file_data) {
+magdown.file.delete_file = function(torrent, file_data) {
 	var save_dir = torrent.metadata.save_dir;
 
 	var file = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
@@ -259,7 +259,7 @@ s3torrent.file.delete_file = function(torrent, file_data) {
 	}
 }
 //------------------------------------------------------------------------------
-s3torrent.file.open_file = function(torrent, file_id) {
+magdown.file.open_file = function(torrent, file_id) {
 	var save_dir = torrent.metadata.save_dir;
 	var file_data = torrent.metadata.file_list[file_id];
 
@@ -289,7 +289,7 @@ s3torrent.file.open_file = function(torrent, file_id) {
 	return false;
 }
 //------------------------------------------------------------------------------
-s3torrent.file.save_metadata = function(win, torrent, data_save) {
+magdown.file.save_metadata = function(win, torrent, data_save) {
 	var fp = Components.classes["@mozilla.org/filepicker;1"].createInstance(Components.interfaces.nsIFilePicker);
 	fp.init(win, null, Components.interfaces.nsIFilePicker.modeSave);
 	fp.defaultString = torrent.metadata.info.name + '.torrent';
@@ -338,6 +338,6 @@ s3torrent.file.save_metadata = function(win, torrent, data_save) {
 	return false;
 }
 //------------------------------------------------------------------------------
-s3torrent.file.download_error = function() {
+magdown.file.download_error = function() {
 }
 //------------------------------------------------------------------------------

@@ -8,57 +8,57 @@
 
 this.EXPORTED_SYMBOLS = [ "torrent" ];
 
-var s3torrent = {};
-s3torrent.torrent = {};
-this.torrent = s3torrent.torrent;
+var magdown = {};
+magdown.torrent = {};
+this.torrent = magdown.torrent;
 
-Components.utils.import("resource://s3torrent/history.js", s3torrent);
-Components.utils.import("resource://s3torrent/tracker_http.js", s3torrent);
-Components.utils.import("resource://s3torrent/tracker_udp.js", s3torrent);
-Components.utils.import("resource://s3torrent/peer.js", s3torrent);
-Components.utils.import("resource://s3torrent/httpseeds.js", s3torrent);
-Components.utils.import("resource://s3torrent/file.js", s3torrent);
-Components.utils.import("resource://s3torrent/bencode.js", s3torrent);
-Components.utils.import("resource://s3torrent/digest.js", s3torrent);
-Components.utils.import("resource://s3torrent/utils.js", s3torrent);
+Components.utils.import("resource://magdown/history.js", magdown);
+Components.utils.import("resource://magdown/tracker_http.js", magdown);
+Components.utils.import("resource://magdown/tracker_udp.js", magdown);
+Components.utils.import("resource://magdown/peer.js", magdown);
+Components.utils.import("resource://magdown/httpseeds.js", magdown);
+Components.utils.import("resource://magdown/file.js", magdown);
+Components.utils.import("resource://magdown/bencode.js", magdown);
+Components.utils.import("resource://magdown/digest.js", magdown);
+Components.utils.import("resource://magdown/utils.js", magdown);
 
-s3torrent.torrent.downloads = {};
-s3torrent.torrent.protocol = {};
-s3torrent.torrent.used_buffer = 0;
+magdown.torrent.downloads = {};
+magdown.torrent.protocol = {};
+magdown.torrent.used_buffer = 0;
 
 //------------------------------------------------------------------------------
-s3torrent.torrent.init = function() {
-	s3torrent.torrent.protocol = s3torrent.torrent.get_protocol();
-	s3torrent.file.download_error = s3torrent.torrent.download_error;
-	s3torrent.torrent.request_observer_init();
+magdown.torrent.init = function() {
+	magdown.torrent.protocol = magdown.torrent.get_protocol();
+	magdown.file.download_error = magdown.torrent.download_error;
+	magdown.torrent.request_observer_init();
 
-	s3torrent.torrent.peer_box_list = [];
-	s3torrent.torrent.is_get_peer_busy = false;
+	magdown.torrent.peer_box_list = [];
+	magdown.torrent.is_get_peer_busy = false;
 
-	var torrent_list = s3torrent.history.load_history_list();
+	var torrent_list = magdown.history.load_history_list();
 	for (var metadata of torrent_list) {
-		if (! s3torrent.torrent.downloads[metadata.s3torrent_id]) {
-			metadata.info_buffer = new Uint8Array(s3torrent.bencode.encode(metadata.info)).buffer;
-			var torrent = s3torrent.torrent.create(metadata);
+		if (! magdown.torrent.downloads[metadata.magdown_id]) {
+			metadata.info_buffer = new Uint8Array(magdown.bencode.encode(metadata.info)).buffer;
+			var torrent = magdown.torrent.create(metadata);
 			if ((torrent.metadata.is_stopped == false) && (torrent.metadata.is_completed == false)) {
 				torrent.metadata.is_stopped = true;
-				s3torrent.torrent.action_start(metadata.s3torrent_id, true);
+				magdown.torrent.action_start(metadata.magdown_id, true);
 			} else if (torrent.metadata.is_completed == false) {
-				s3torrent.torrent.calculate_data(torrent);
+				magdown.torrent.calculate_data(torrent);
 			}
 		}
 	}
-	s3torrent.torrent.update_toolbar_text();
+	magdown.torrent.update_toolbar_text();
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent.get_protocol = function() {
+magdown.torrent.get_protocol = function() {
 	//-----------------------------------------------------------------------------
 	var protocol = {
 		protocol_name: 'BitTorrent protocol',
 		client_name: 'BitComet/1.37.12.31',
-		peer_max_count: s3torrent.utils.prefs.getIntPref('torrent.peer_max_count', 20),
+		peer_max_count: magdown.utils.prefs.getIntPref('torrent.peer_max_count', 20),
 		peer_max_const: 500,
-		data_max_buffer: s3torrent.utils.prefs.getIntPref('torrent.data_max_buffer'),
+		data_max_buffer: magdown.utils.prefs.getIntPref('torrent.data_max_buffer'),
 		piece_max_buffer: 100000, // 100 KB memory
 		extension_messages: { ut_metadata: 2, ut_pex: 3 },
 		piece_size: 16384,
@@ -83,8 +83,8 @@ s3torrent.torrent.get_protocol = function() {
 			'20' : 'UTORRENT_MSG'
 		},
 		message_names: {},
-		get_piece_request : s3torrent.torrent.get_piece_request,
-		set_piece_request : s3torrent.torrent.set_piece_request,
+		get_piece_request : magdown.torrent.get_piece_request,
+		set_piece_request : magdown.torrent.set_piece_request,
 		// http://pastebin.com/KcETt8JA
 		public_trackers: ['udp://tracker.openbittorrent.com:80', 'udp://tracker.istole.it:6969', 'http://exodus.desync.com:6969/announce', 'http://pow7.com:80/announce', 'udp://tracker.publicbt.com:80', 'udp://tracker.istole.it:80', 'udp://tracker.ccc.de:80']
 	};
@@ -95,7 +95,7 @@ s3torrent.torrent.get_protocol = function() {
 	return protocol;
 };
 //------------------------------------------------------------------------------
-s3torrent.torrent.get_metadata_magnet = function(meta_tmp, info) {
+magdown.torrent.get_metadata_magnet = function(meta_tmp, info) {
 	var metadata = {
 		'comment' : '',
 		'created by' : 'Magnet',
@@ -105,15 +105,18 @@ s3torrent.torrent.get_metadata_magnet = function(meta_tmp, info) {
 		'publisher-url' : meta_tmp.publisher_url
 	};
 	metadata.info = info;
+	if (metadata.info.name) {
+		metadata.info.name = metadata.info.name.replace(/\//g, '_');
+	}
 
 	metadata.hashbytes = meta_tmp.hashbytes;
 	metadata.hashhexlower = meta_tmp.hashhexlower;
-	metadata.s3torrent_id = 's3torrent_' + meta_tmp.hashhexlower;
+	metadata.magdown_id = 'magdown_' + meta_tmp.hashhexlower;
 
 	//-----------------------------------------------------------------------------
-	var check_torrent_id = s3torrent.history.get_history(metadata.s3torrent_id);
+	var check_torrent_id = magdown.history.get_history(metadata.magdown_id);
 	if (check_torrent_id) {
-		metadata.error = s3torrent.utils.get_string('error.torrent_file_exists', [ check_torrent_id.info.name ]);
+		metadata.error = magdown.utils.get_string('error.torrent_file_exists', [ check_torrent_id.info.name ]);
 	}
 
 	//-----------------------------------------------------------------------------
@@ -145,41 +148,41 @@ s3torrent.torrent.get_metadata_magnet = function(meta_tmp, info) {
 	return metadata;
 }
 //------------------------------------------------------------------------------
-s3torrent.torrent.get_metadata_buffer = function(buffer) {
+magdown.torrent.get_metadata_buffer = function(buffer) {
 	var metadata = {};
 
 	try {
 		// try to make this utf-8 aware...
 		if (buffer.byteLength > Math.pow(2,25)) { // 32 megs 
-			metadata.error = s3torrent.utils.get_string('error.torrent_file_to_large', s3torrent.utils.get_strings_to_KB_MB_GB(buffer.byteLength));
+			metadata.error = magdown.utils.get_string('error.torrent_file_to_large', magdown.utils.get_strings_to_KB_MB_GB(buffer.byteLength));
 		}
 		//-----------------------------------------------------------------
-//		metadata = s3torrent.bencode.decode(s3torrent.utils.ui82str(new Uint8Array(buffer)));
-		metadata = s3torrent.bencode.decode(s3torrent.utils.ui82str(new Uint8Array(buffer)), { utf8:true });
+//		metadata = magdown.bencode.decode(magdown.utils.ui82str(new Uint8Array(buffer)));
+		metadata = magdown.bencode.decode(magdown.utils.ui82str(new Uint8Array(buffer)), { utf8:true });
 	 	if (metadata.encoding) {
 			if (metadata.encoding.toLowerCase() != 'utf-8' && metadata.encoding.toLowerCase() != 'utf8') {
-//				metadata = s3torrent.bencode.decode(s3torrent.utils.ui82str(new Uint8Array(buffer)), { utf8:true });
-				metadata = s3torrent.bencode.decode(s3torrent.utils.ui82str(new Uint8Array(buffer)));
+//				metadata = magdown.bencode.decode(magdown.utils.ui82str(new Uint8Array(buffer)), { utf8:true });
+				metadata = magdown.bencode.decode(magdown.utils.ui82str(new Uint8Array(buffer)));
 			}
 		}
 
 		//-----------------------------------------------------------------
-		var sha1_hash = s3torrent.digest.checksum_buffer([s3torrent.bencode.encode(metadata.info)], 'SHA1');
+		var sha1_hash = magdown.digest.checksum_buffer([magdown.bencode.encode(metadata.info)], 'SHA1');
 		metadata.hashbytes = sha1_hash.bytes;
 		metadata.hashhexlower = sha1_hash.text;
-		metadata.s3torrent_id = 's3torrent_' + sha1_hash.text;
+		metadata.magdown_id = 'magdown_' + sha1_hash.text;
 	} catch(e) {
-		metadata.error = s3torrent.utils.get_string('error.torrent_file_invalid');
+		metadata.error = magdown.utils.get_string('error.torrent_file_invalid');
         }
 
 	//-----------------------------------------------------------------------------
-	var check_torrent_id = s3torrent.history.get_history(metadata.s3torrent_id);
+	var check_torrent_id = magdown.history.get_history(metadata.magdown_id);
 	if (check_torrent_id) {
-		metadata.error = s3torrent.utils.get_string('error.torrent_file_exists', [ check_torrent_id.info.name ]);
+		metadata.error = magdown.utils.get_string('error.torrent_file_exists', [ check_torrent_id.info.name ]);
 	}
 
 	//-----------------------------------------------------------------------------
-	var tmp_announce_url = [].concat(s3torrent.torrent.protocol.public_trackers);
+	var tmp_announce_url = [].concat(magdown.torrent.protocol.public_trackers);
 	metadata.announce_list = {};
 	var tracker_id = 0;
 	if (! metadata.announce) {
@@ -209,6 +212,10 @@ s3torrent.torrent.get_metadata_buffer = function(buffer) {
 	metadata.file_list = [];
 
 	if (metadata.info) {
+		if (metadata.info.name) {
+			metadata.info.name = metadata.info.name.replace(/\//g, '_');
+		}
+
 		if (metadata.info.files) {
 			for (var file of metadata.info.files) {
 				metadata.file_list.push({ 'length': file.length, 'path': file.path,  'parent_dir' : metadata.info.name, 'file_id':  metadata.file_list.length, 'status': 'process' });
@@ -223,10 +230,10 @@ s3torrent.torrent.get_metadata_buffer = function(buffer) {
 	return metadata;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.add_new = function(metadata, is_later) {
+magdown.torrent.add_new = function(metadata, is_later) {
 	if (metadata && metadata.announce_list && metadata.info) {
 		//----------------------------------------------------------------------------
-		metadata.info_buffer = new Uint8Array(s3torrent.bencode.encode(metadata.info)).buffer;
+		metadata.info_buffer = new Uint8Array(magdown.bencode.encode(metadata.info)).buffer;
 
 		//----------------------------------------------------------------------------
 		metadata.is_completed = false;
@@ -248,25 +255,25 @@ s3torrent.torrent.add_new = function(metadata, is_later) {
 		metadata.chunk_offset = 0;
 
 		//----------------------------------------------------------------------------
-		var torrent = s3torrent.torrent.create(metadata);
-		s3torrent.utils.notification_box(torrent.metadata.info.name, s3torrent.utils.get_string('download.created'));
-		if (s3torrent.utils.prefs.getBoolPref('DL.switchDownloadsTab')) {
+		var torrent = magdown.torrent.create(metadata);
+		magdown.utils.notification_box(torrent.metadata.info.name, magdown.utils.get_string('download.created'));
+		if (magdown.utils.prefs.getBoolPref('DL.switchDownloadsTab')) {
 			try {
-				var wm_window = s3torrent.utils.get_window();
-				wm_window.s3torrent.open_download_window();
+				var wm_window = magdown.utils.get_window();
+				wm_window.magdown.open_download_window();
 			} catch(e) {
 			}
 		}
 		if (is_later) {
-			s3torrent.torrent.calculate_data(torrent);
+			magdown.torrent.calculate_data(torrent);
 		} else {
-			s3torrent.torrent.action_start(metadata.s3torrent_id);
+			magdown.torrent.action_start(metadata.magdown_id);
 		}
-		s3torrent.torrent.history_save(torrent);
+		magdown.torrent.history_save(torrent);
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.create = function(metadata) {
+magdown.torrent.create = function(metadata) {
 	var torrent = {};
 	torrent.metadata = metadata;
 	torrent.piece_buffer = {};
@@ -284,25 +291,25 @@ s3torrent.torrent.create = function(metadata) {
 	torrent.peer_grey_list = {};
 	torrent.httpseed = null;
 
-	s3torrent.torrent.downloads[metadata.s3torrent_id] = torrent;
+	magdown.torrent.downloads[metadata.magdown_id] = torrent;
 	return torrent;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.action_stop = function(torrent_id) {
-	for (var torrent_key in s3torrent.torrent.downloads) {
+magdown.torrent.action_stop = function(torrent_id) {
+	for (var torrent_key in magdown.torrent.downloads) {
 		if ((torrent_id == 'all') || (torrent_id == torrent_key)) {
-			var torrent = s3torrent.torrent.downloads[torrent_key];
+			var torrent = magdown.torrent.downloads[torrent_key];
 			if (torrent && (torrent.metadata.is_stopped == false) && (torrent.metadata.is_completed == false)) {
-				s3torrent.torrent.download_stop(torrent);
+				magdown.torrent.download_stop(torrent);
 			}
 		}
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.action_start = function(torrent_id, is_disable_notification) {
-	for (var torrent_key in s3torrent.torrent.downloads) {
+magdown.torrent.action_start = function(torrent_id, is_disable_notification) {
+	for (var torrent_key in magdown.torrent.downloads) {
 		if ((torrent_id == 'all') || (torrent_id == torrent_key)) {
-			var torrent = s3torrent.torrent.downloads[torrent_key];
+			var torrent = magdown.torrent.downloads[torrent_key];
 			if (torrent && torrent.metadata.is_stopped && (! torrent.metadata.is_completed)) {
 				torrent.metadata.is_error = false;
 				torrent.metadata.is_error_text = '';
@@ -314,89 +321,89 @@ s3torrent.torrent.action_start = function(torrent_id, is_disable_notification) {
 					delete torrent.piece_hash['piece_' + i];
 				}
 				//---------------------------------------------------------
-				s3torrent.torrent.calculate_data(torrent);
-				if (! s3torrent.torrent.check_stop_status(torrent)) {
+				magdown.torrent.calculate_data(torrent);
+				if (! magdown.torrent.check_stop_status(torrent)) {
 					if (! torrent.peer_work_list) {
 						torrent.peer_work_list = {};
 					}
 					if (! is_disable_notification) {
-						s3torrent.utils.notification_box(torrent.metadata.info.name, s3torrent.utils.get_string('download.started'));
+						magdown.utils.notification_box(torrent.metadata.info.name, magdown.utils.get_string('download.started'));
 					}
 					for (var tracker_key in torrent.metadata.announce_list) {
-						s3torrent.torrent.init_tracker(torrent, tracker_key);
+						magdown.torrent.init_tracker(torrent, tracker_key);
 					}
-					s3torrent.torrent.httpseed_start(torrent);
+					magdown.torrent.httpseed_start(torrent);
 				}
-				s3torrent.torrent.history_save(torrent);
+				magdown.torrent.history_save(torrent);
 			}
 		}
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.check_stop_status = function(torrent) {
+magdown.torrent.check_stop_status = function(torrent) {
 	var status = torrent.metadata.is_completed || torrent.metadata.is_error || torrent.metadata.is_stopped;
 	return status;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.httpseed_start = function(torrent) {
+magdown.torrent.httpseed_start = function(torrent) {
 	if (torrent.httpseed && torrent.httpseed.is_work) {
 		return;
 	}
-	s3torrent.torrent.httpseed_stop(torrent);
+	magdown.torrent.httpseed_stop(torrent);
 	if (torrent.metadata['httpseeds']) {
 		if ((! torrent.httpseed) || (! torrent.httpseed.is_work)) {
-			torrent.httpseed = new s3torrent.HTTPSeeds( torrent, torrent.metadata['httpseeds'], s3torrent.torrent.protocol,  s3torrent.torrent.httpseed_callback );
+			torrent.httpseed = new magdown.HTTPSeeds( torrent, torrent.metadata['httpseeds'], magdown.torrent.protocol,  magdown.torrent.httpseed_callback );
 			torrent.httpseed.request();
 		}
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.httpseed_stop = function(torrent) {
+magdown.torrent.httpseed_stop = function(torrent) {
 	if (torrent.httpseed) {
 		torrent.httpseed.connect_close(true);
 		torrent.httpseed = null;
-		s3torrent.torrent.history_save(torrent);
+		magdown.torrent.history_save(torrent);
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.httpseed_callback = function(is_ok, httpseed, torrent) {
+magdown.torrent.httpseed_callback = function(is_ok, httpseed, torrent) {
 	if (! is_ok) {
-//		s3torrent.torrent.httpseed_start(torrent);
+//		magdown.torrent.httpseed_start(torrent);
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.init_tracker = function(torrent, tracker_key) {
+magdown.torrent.init_tracker = function(torrent, tracker_key) {
 	var announce = torrent.metadata.announce_list[tracker_key];
 	if (! announce) { return; }
-	if (s3torrent.torrent.check_stop_status(torrent)) { return; }
+	if (magdown.torrent.check_stop_status(torrent)) { return; }
 
-	torrent.tracker[tracker_key] = s3torrent.torrent.init_tracker_run( torrent, announce.url );
+	torrent.tracker[tracker_key] = magdown.torrent.init_tracker_run( torrent, announce.url );
 	torrent.tracker[tracker_key].tracker_key = tracker_key;
-	torrent.tracker[tracker_key].announce('stopped', s3torrent.torrent.announce_restart);
+	torrent.tracker[tracker_key].announce('stopped', magdown.torrent.announce_restart);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.init_tracker_run = function(torrent, url) {
+magdown.torrent.init_tracker_run = function(torrent, url) {
 	var tracker = null;
 
 	if (url.toLowerCase().match('^udp')) {
-		tracker = new s3torrent.UDPTracker( torrent, url );
+		tracker = new magdown.UDPTracker( torrent, url );
 	} else {
-		tracker = new s3torrent.HTTPTracker( torrent, url );
+		tracker = new magdown.HTTPTracker( torrent, url );
 	}
 	return tracker;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.announce_restart = function(is_ok, tracker, torrent) {
-	tracker.announce('started', s3torrent.torrent.announce_end);
+magdown.torrent.announce_restart = function(is_ok, tracker, torrent) {
+	tracker.announce('started', magdown.torrent.announce_end);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.announce_end = function(is_ok, tracker, torrent) {
+magdown.torrent.announce_end = function(is_ok, tracker, torrent) {
 	if (is_ok && tracker.peer_list.length <= 1) {
 		tracker.peer_list = [];
 		is_ok = false;
 	}
 	//------------------------------------------------------------------------------
-	if (s3torrent.torrent.check_stop_status(torrent)) {
+	if (magdown.torrent.check_stop_status(torrent)) {
 		is_ok = false;
 	}
 	//------------------------------------------------------------------------------
@@ -412,8 +419,8 @@ s3torrent.torrent.announce_end = function(is_ok, tracker, torrent) {
 			}
 		}
 
-		while (s3torrent.torrent.get_peer_check(torrent)) {
-			if (! s3torrent.torrent.get_peer(torrent)) {
+		while (magdown.torrent.get_peer_check(torrent)) {
+			if (! magdown.torrent.get_peer(torrent)) {
 				break;
 			}
 		}
@@ -434,13 +441,13 @@ s3torrent.torrent.announce_end = function(is_ok, tracker, torrent) {
 			}
 		}
 		if (all_tracker_error) {
-			s3torrent.torrent.download_error(torrent, 'error.torrent_not_found');
+			magdown.torrent.download_error(torrent, 'error.torrent_not_found');
 		}
 	}
-	s3torrent.torrent.history_save(torrent);
+	magdown.torrent.history_save(torrent);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.peer_connect_end = function(is_ok, peer, torrent, peer_data_new) {
+magdown.torrent.peer_connect_end = function(is_ok, peer, torrent, peer_data_new) {
 	var is_get_peer = false;
 	if (! torrent) { return; }
 	for (var i in peer.piece_download) {
@@ -500,17 +507,17 @@ s3torrent.torrent.peer_connect_end = function(is_ok, peer, torrent, peer_data_ne
 	delete torrent.peer[peer.peer_key];
 	//-----------------------------------------------------------------------------
 	if (is_get_peer) {
-		while (s3torrent.torrent.get_peer_check(torrent)) {
-			if (! s3torrent.torrent.get_peer(torrent)) {
+		while (magdown.torrent.get_peer_check(torrent)) {
+			if (! magdown.torrent.get_peer(torrent)) {
 				break;
 			}
 		}
 	}
 	//-----------------------------------------------------------------------------
-	s3torrent.torrent.history_save(torrent);
+	magdown.torrent.history_save(torrent);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.get_peer = function(torrent) {
+magdown.torrent.get_peer = function(torrent) {
 	var peer_data = null;
 	var tmp_list = [];
 	var tmp_hash = {};
@@ -528,13 +535,13 @@ s3torrent.torrent.get_peer = function(torrent) {
 			continue;
 		}
 		torrent.peer_work_list[peer_key] = true;
-		var peer = new s3torrent.Peer( torrent, peer_key, s3torrent.torrent.protocol );
+		var peer = new magdown.Peer( torrent, peer_key, magdown.torrent.protocol );
 		peer.ip = peer_data.ip;
 		peer.port = peer_data.port;
 		torrent.peer[peer_key] = peer;
 		//-----------------------------------------------------------------------
-		s3torrent.torrent.peer_box_list.push(peer);
-		s3torrent.torrent.get_peer_run();
+		magdown.torrent.peer_box_list.push(peer);
+		magdown.torrent.get_peer_run();
 		is_ok = true;
 		break;
 	}
@@ -547,9 +554,9 @@ s3torrent.torrent.get_peer = function(torrent) {
 		torrent.peer_grey_list = {};
 		torrent.peer_black_list = {};
 
-		s3torrent.utils.setTimeout(function(){ 
+		magdown.utils.setTimeout(function(){ 
 			for (var tracker_key in torrent.metadata.announce_list) {
-				s3torrent.torrent.init_tracker(torrent, tracker_key);
+				magdown.torrent.init_tracker(torrent, tracker_key);
 			}
 		}, tracker.req_interval * 60000);
 	}
@@ -557,13 +564,13 @@ s3torrent.torrent.get_peer = function(torrent) {
 	return is_ok;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.get_peer_check = function(torrent) {
-	if (s3torrent.torrent.check_stop_status(torrent)) {
+magdown.torrent.get_peer_check = function(torrent) {
+	if (magdown.torrent.check_stop_status(torrent)) {
 		return false;
 	}
 	//-----------------------------------------------------------------------------
-	var peer_max_count = s3torrent.torrent.get_peer_max_count();
-	var result_count = s3torrent.torrent.get_peer_count(torrent);
+	var peer_max_count = magdown.torrent.get_peer_max_count();
+	var result_count = magdown.torrent.get_peer_count(torrent);
 	//-----------------------------------------------------------------------------
 	if (result_count.all == 0) {
 		return false;
@@ -580,9 +587,9 @@ s3torrent.torrent.get_peer_check = function(torrent) {
 	return false;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.check_speed_limit = function(torrent) {
-	var speed_limit_all = s3torrent.utils.prefs.getIntPref('torrent.speed_limit_all', 0);
-	var speed_limit_one = s3torrent.utils.prefs.getIntPref('torrent.speed_limit_one', 0);
+magdown.torrent.check_speed_limit = function(torrent) {
+	var speed_limit_all = magdown.utils.prefs.getIntPref('torrent.speed_limit_all', 0);
+	var speed_limit_one = magdown.utils.prefs.getIntPref('torrent.speed_limit_one', 0);
 	if ((speed_limit_all == 0) && (speed_limit_one == 0)) { return true; }
 
 	if (speed_limit_one > 0) {
@@ -595,9 +602,9 @@ s3torrent.torrent.check_speed_limit = function(torrent) {
 
 	if (speed_limit_all > 0) {
 		var speed_all = 0;
-		for (var torrent_key in s3torrent.torrent.downloads) {
-			var torrent2 = s3torrent.torrent.downloads[torrent_key];
-			if (! s3torrent.torrent.check_stop_status(torrent2)) {
+		for (var torrent_key in magdown.torrent.downloads) {
+			var torrent2 = magdown.torrent.downloads[torrent_key];
+			if (! magdown.torrent.check_stop_status(torrent2)) {
 				if (torrent2.metadata && torrent2.metadata.download_speed) {
 					speed_all += torrent2.metadata.download_speed;
 				}
@@ -609,12 +616,12 @@ s3torrent.torrent.check_speed_limit = function(torrent) {
 	return true;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.get_peer_run = function(is_force) {
-	if (is_force || (! s3torrent.torrent.is_get_peer_busy)) {
-		s3torrent.torrent.is_get_peer_busy = true;
-		var peer = s3torrent.torrent.peer_box_list.shift();
+magdown.torrent.get_peer_run = function(is_force) {
+	if (is_force || (! magdown.torrent.is_get_peer_busy)) {
+		magdown.torrent.is_get_peer_busy = true;
+		var peer = magdown.torrent.peer_box_list.shift();
 		if (peer) {
-			if ((! peer.torrent) || s3torrent.torrent.check_stop_status(peer.torrent)) {
+			if ((! peer.torrent) || magdown.torrent.check_stop_status(peer.torrent)) {
 				peer.piece_have = {};
 				if (peer.torrent) {
 					delete peer.torrent.peer_work_list[peer.peer_key];
@@ -626,73 +633,73 @@ s3torrent.torrent.get_peer_run = function(is_force) {
 			} else if (peer.socket_open) {
 				peer = null;
 			} else {
-				peer.handshake(peer.ip, peer.port, s3torrent.torrent.peer_connect_end);
+				peer.handshake(peer.ip, peer.port, magdown.torrent.peer_connect_end);
 			}
 		}
 		//-----------------------------------------------------------------------
-		if (s3torrent.torrent.peer_box_list.length > 0) {
-			s3torrent.utils.setTimeout(function(){
-				s3torrent.torrent.get_peer_run(true);
+		if (magdown.torrent.peer_box_list.length > 0) {
+			magdown.utils.setTimeout(function(){
+				magdown.torrent.get_peer_run(true);
 			}, 300);
 		}
 		//-----------------------------------------------------------------------
 		else {
-			s3torrent.torrent.is_get_peer_busy = false;
+			magdown.torrent.is_get_peer_busy = false;
 		}
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.download_complete = function(torrent) {
+magdown.torrent.download_complete = function(torrent) {
 	torrent.metadata.is_completed = true;
 	torrent.metadata.is_error = false;
-	torrent.metadata.downloaded = s3torrent.torrent.calculate_total_size(torrent);
-	s3torrent.torrent.download_stop(torrent);
+	torrent.metadata.downloaded = magdown.torrent.calculate_total_size(torrent);
+	magdown.torrent.download_stop(torrent);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.download_error = function(torrent, msg, file_path) {
+magdown.torrent.download_error = function(torrent, msg, file_path) {
 	torrent.metadata.is_error = true;
 	torrent.metadata.is_completed = false;
-	torrent.metadata.is_error_text = s3torrent.utils.get_string(msg, [ file_path ]);
-	s3torrent.utils.notification_box(torrent.metadata.is_error_text);
-	s3torrent.torrent.download_stop(torrent);
+	torrent.metadata.is_error_text = magdown.utils.get_string(msg, [ file_path ]);
+	magdown.utils.notification_box(torrent.metadata.is_error_text);
+	magdown.torrent.download_stop(torrent);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.download_stop = function(torrent) {
+magdown.torrent.download_stop = function(torrent) {
 	for(var peer_key in torrent.peer) {
 		torrent.peer[peer_key].socket_close(true);
 		delete torrent.peer_work_list[peer_key];
 	}
-	s3torrent.torrent.httpseed_stop(torrent);
+	magdown.torrent.httpseed_stop(torrent);
 
 	for (var i =0; i<torrent.metadata.piece_count; i++) {
 		var piece = torrent.piece_hash['piece_' + i];
 		if (piece) {
 			for (var chunk_key in piece.chunk_offset_hash) {
 				if (piece.chunk_offset_hash[chunk_key].data) {
-					s3torrent.torrent.used_buffer -= piece.chunk_offset_hash[chunk_key].data.byteLength;
+					magdown.torrent.used_buffer -= piece.chunk_offset_hash[chunk_key].data.byteLength;
 				}
 				piece.chunk_offset_hash[chunk_key] = null;
 				delete piece.chunk_offset_hash[chunk_key];
 			}
 		}
 	}
-	s3torrent.torrent.save_data(torrent);
+	magdown.torrent.save_data(torrent);
 
 	torrent.metadata.download_speed = 0;
 	torrent.download_speed_data = [];
 	if ((! torrent.metadata.is_removed) && (! torrent.metadata.is_stopped) && (! torrent.metadata.is_completed)) {
-		s3torrent.utils.notification_box(torrent.metadata.info.name, s3torrent.utils.get_string('download.stopped'));
+		magdown.utils.notification_box(torrent.metadata.info.name, magdown.utils.get_string('download.stopped'));
 	}
 	torrent.metadata.is_stopped = true;
-	s3torrent.torrent.history_save(torrent);
+	magdown.torrent.history_save(torrent);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.get_piece_request = function(torrent, piece_have, piece_future_inc, piece_current_id) {
+magdown.torrent.get_piece_request = function(torrent, piece_have, piece_future_inc, piece_current_id) {
 	var result = { 'piece_id': 0, 'chunk_offset': null, 'chunk_size': 0, 'action' : 'cancel' };
 	if (torrent && torrent.metadata.is_removed) { return result; }
 
 	//------------------------------------------------------------------------------
-	if ((! torrent) || (s3torrent.torrent.check_stop_status(torrent))) {
+	if ((! torrent) || (magdown.torrent.check_stop_status(torrent))) {
 		return result;
 	}
 	//------------------------------------------------------------------------------
@@ -701,7 +708,7 @@ s3torrent.torrent.get_piece_request = function(torrent, piece_have, piece_future
 		return result;
 	} 
 	//------------------------------------------------------------------------------
-	if (! s3torrent.torrent.check_speed_limit(torrent)) {
+	if (! magdown.torrent.check_speed_limit(torrent)) {
 		result.action = 'pause';
 		return result;
 	}
@@ -709,21 +716,21 @@ s3torrent.torrent.get_piece_request = function(torrent, piece_have, piece_future
 	result.piece_id = torrent.metadata.piece_current + piece_future_inc;
 	//------------------------------------------------------------------------------
 	var piece = torrent.piece_hash['piece_' + result.piece_id];
-	result.chunk_size = s3torrent.torrent.protocol.chunk_size;
+	result.chunk_size = magdown.torrent.protocol.chunk_size;
 	result.chunk_offset = null;
 	result.action = 'pause';
 
 	//------------------------------------------------------------------------------
 	if (piece_have['piece_' + result.piece_id] > 0) {
 		var chunk_work_list = [];
-		var chunk_offset_count = s3torrent.torrent.chunk_offset_count(torrent, result.piece_id);
+		var chunk_offset_count = magdown.torrent.chunk_offset_count(torrent, result.piece_id);
 		if (! piece.completed) {
 			for (var i = 0; i< chunk_offset_count; i++) {
 				var chunk_key = 'chunk_' + (i * result.chunk_size);
 				if (! piece.chunk_offset_hash[chunk_key]) {
 					result.chunk_offset = i * result.chunk_size;
 					result.action = 'download';
-					var piece_length = s3torrent.torrent.calculate_piece_length(torrent, result.piece_id);
+					var piece_length = magdown.torrent.calculate_piece_length(torrent, result.piece_id);
 					if ((result.chunk_offset + result.chunk_size) > piece_length) {
 						result.chunk_size = piece_length - result.chunk_offset;
 					}
@@ -736,7 +743,7 @@ s3torrent.torrent.get_piece_request = function(torrent, piece_have, piece_future
 		}
 		//------------------------------------------------------------------------
 		if (result.action == 'pause') {
-			var max_count = s3torrent.torrent.calculate_total_buffer(torrent.metadata.piece_length);
+			var max_count = magdown.torrent.calculate_total_buffer(torrent.metadata.piece_length);
 			if (piece_future_inc <= max_count) {
 				var piece_future_inc_tmp = piece_future_inc;
 				if (piece_future_inc_tmp == 0) {
@@ -752,14 +759,14 @@ s3torrent.torrent.get_piece_request = function(torrent, piece_have, piece_future
 					if (piece_current_id == torrent.metadata.piece_current) {
 						torrent.metadata.piece_future = torrent.metadata.piece_current + piece_future_inc_tmp;
 					}
-					result = s3torrent.torrent.get_piece_request(torrent, piece_have, piece_future_inc_tmp, piece_current_id);
+					result = magdown.torrent.get_piece_request(torrent, piece_have, piece_future_inc_tmp, piece_current_id);
 				}
 				if ((piece_future_inc == 0) && ((result.action == 'pause') || (result.action == 'cancel'))) {
 					var hash = chunk_work_list[Math.floor(Math.random()*chunk_work_list.length)];
 					if (hash) {
 						if (hash.done) {
-							if (s3torrent.torrent.calculate_piece_elements(torrent, torrent.metadata.piece_current)) {
-								s3torrent.torrent.calculate_piece_timeout(torrent, torrent.metadata.piece_current);
+							if (magdown.torrent.calculate_piece_elements(torrent, torrent.metadata.piece_current)) {
+								magdown.torrent.calculate_piece_timeout(torrent, torrent.metadata.piece_current);
 							}
 						}
 						else if (chunk_work_list.length < 5) {
@@ -769,8 +776,8 @@ s3torrent.torrent.get_piece_request = function(torrent, piece_have, piece_future
 							result.action = 'download';
 						}
 					} else {
-						if (s3torrent.torrent.calculate_piece_elements(torrent, torrent.metadata.piece_current)) {
-							s3torrent.torrent.calculate_piece_timeout(torrent, torrent.metadata.piece_current);
+						if (magdown.torrent.calculate_piece_elements(torrent, torrent.metadata.piece_current)) {
+							magdown.torrent.calculate_piece_timeout(torrent, torrent.metadata.piece_current);
 						}
 					}
 				}
@@ -786,7 +793,7 @@ s3torrent.torrent.get_piece_request = function(torrent, piece_have, piece_future
 	return result;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.set_piece_request = function(torrent, piece_download, is_done, data) {
+magdown.torrent.set_piece_request = function(torrent, piece_download, is_done, data) {
 	if (torrent && torrent.metadata.is_removed) { return; }
 	//------------------------------------------------------------------------------
 	if (piece_download.piece_id < torrent.metadata.piece_current) {
@@ -798,13 +805,13 @@ s3torrent.torrent.set_piece_request = function(torrent, piece_download, is_done,
 	//------------------------------------------------------------------------------
 	if (is_done) {
 		if (piece.chunk_offset_hash[chunk_key] && (! piece.chunk_offset_hash[chunk_key].done)) {
-			s3torrent.torrent.used_buffer += data.byteLength;
+			magdown.torrent.used_buffer += data.byteLength;
 //			torrent.metadata.downloaded += data.byteLength;
 		}
 		piece.chunk_offset_hash[chunk_key] = { 'done' : true, 'data' : data };
-		s3torrent.torrent.calculate_speed(torrent, piece_download);
-//		s3torrent.torrent.calculate_piece_timeout(torrent, piece_download.piece_id);
-		s3torrent.torrent.history_save(torrent);
+		magdown.torrent.calculate_speed(torrent, piece_download);
+//		magdown.torrent.calculate_piece_timeout(torrent, piece_download.piece_id);
+		magdown.torrent.history_save(torrent);
 	}
 	//------------------------------------------------------------------------------
 	else {
@@ -817,11 +824,11 @@ s3torrent.torrent.set_piece_request = function(torrent, piece_download, is_done,
 		}
 	}
 	//------------------------------------------------------------------------------
-	s3torrent.torrent.calculate_piece_timeout(torrent, piece_download.piece_id);
+	magdown.torrent.calculate_piece_timeout(torrent, piece_download.piece_id);
 	data = null;
 	//------------------------------------------------------------------------------
-	while (s3torrent.torrent.get_peer_check(torrent)) {
-		if (! s3torrent.torrent.get_peer(torrent)) {
+	while (magdown.torrent.get_peer_check(torrent)) {
+		if (! magdown.torrent.get_peer(torrent)) {
 			break;
 		}
 	}
@@ -829,11 +836,11 @@ s3torrent.torrent.set_piece_request = function(torrent, piece_download, is_done,
 	return true;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_piece_timeout = function(torrent, piece_id, is_force) {
-	s3torrent.utils.setTimeout(function(){ s3torrent.torrent.calculate_piece(torrent, piece_id, is_force); }, 100);
+magdown.torrent.calculate_piece_timeout = function(torrent, piece_id, is_force) {
+	magdown.utils.setTimeout(function(){ magdown.torrent.calculate_piece(torrent, piece_id, is_force); }, 100);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_piece = function(torrent, piece_id, is_force) {
+magdown.torrent.calculate_piece = function(torrent, piece_id, is_force) {
 	if (piece_id < torrent.metadata.piece_current) {
 		torrent.piece_hash['piece_' + piece_id].chunk_offset_hash = {};
 		torrent.piece_hash['piece_' + piece_id].chunk_offset_current = 0;
@@ -858,8 +865,8 @@ s3torrent.torrent.calculate_piece = function(torrent, piece_id, is_force) {
 	}
 
 	var piece_completed = [];
-	var chunk_size = s3torrent.torrent.protocol.chunk_size;
-	var chunk_offset_count = s3torrent.torrent.chunk_offset_count(torrent, piece_id);
+	var chunk_size = magdown.torrent.protocol.chunk_size;
+	var chunk_offset_count = magdown.torrent.chunk_offset_count(torrent, piece_id);
 
 	for (var i = 0; i< chunk_offset_count; i++) {
 		var piece_hash = piece.chunk_offset_hash['chunk_' + (i * chunk_size)];
@@ -875,11 +882,11 @@ s3torrent.torrent.calculate_piece = function(torrent, piece_id, is_force) {
 			delete piece.chunk_offset_hash[chunk_key];
 		}
 		//----------------------------------------------------------------------------------
-		var sha1_hash = s3torrent.digest.checksum_buffer(piece_completed, 'SHA1');
+		var sha1_hash = magdown.digest.checksum_buffer(piece_completed, 'SHA1');
 		var piece_hashsum = torrent.metadata.info.pieces.slice( piece_id * 20, (piece_id+1)*20 );
 		if (sha1_hash.hash == piece_hashsum) {
 			//---------------------------------------------------------------------------
-			var piece_data = new Uint8Array(s3torrent.torrent.calculate_piece_length(torrent, piece_id));
+			var piece_data = new Uint8Array(magdown.torrent.calculate_piece_length(torrent, piece_id));
 			var data_length = 0;
 			for (var data of piece_completed) {
 				piece_data.set( new Uint8Array( data ), data_length );
@@ -904,18 +911,18 @@ s3torrent.torrent.calculate_piece = function(torrent, piece_id, is_force) {
 			}
 			//---------------------------------------------------------------------------
 			if (piece_current >= torrent.metadata.piece_count) {
-				s3torrent.torrent.download_complete(torrent);
-				s3torrent.torrent.save_data(torrent);
-				s3torrent.utils.notification_box(torrent.metadata.info.name, s3torrent.utils.get_string('download.completed'));
+				magdown.torrent.download_complete(torrent);
+				magdown.torrent.save_data(torrent);
+				magdown.utils.notification_box(torrent.metadata.info.name, magdown.utils.get_string('download.completed'));
 			} else {
-				if (torrent.piece_buffer_length > s3torrent.torrent.protocol.piece_max_buffer) {
-					s3torrent.utils.setTimeout(function() { s3torrent.torrent.save_data(torrent); }, 100);
+				if (torrent.piece_buffer_length > magdown.torrent.protocol.piece_max_buffer) {
+					magdown.utils.setTimeout(function() { magdown.torrent.save_data(torrent); }, 100);
 				}
 				torrent.metadata.piece_current = piece_current;
 				torrent.metadata.piece_future = piece_current;
-				s3torrent.torrent.calculate_piece_timeout(torrent, piece_current, true);
+				magdown.torrent.calculate_piece_timeout(torrent, piece_current, true);
 			}
-			s3torrent.torrent.throw_peer_slow(torrent);
+			magdown.torrent.throw_peer_slow(torrent);
 		}
 	}
 
@@ -923,14 +930,14 @@ s3torrent.torrent.calculate_piece = function(torrent, piece_id, is_force) {
 	return true;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_piece_elements = function(torrent, piece_id) {
+magdown.torrent.calculate_piece_elements = function(torrent, piece_id) {
 	var piece = torrent.piece_hash['piece_' + piece_id];
 	if (! piece) {
 		return false;
 	}
 	var piece_completed = 0;
-	var chunk_size = s3torrent.torrent.protocol.chunk_size;
-	var chunk_offset_count = s3torrent.torrent.chunk_offset_count(torrent, piece_id);
+	var chunk_size = magdown.torrent.protocol.chunk_size;
+	var chunk_offset_count = magdown.torrent.chunk_offset_count(torrent, piece_id);
 
 	for (var i = 0; i< chunk_offset_count; i++) {
 		var piece_hash = piece.chunk_offset_hash['chunk_' + (i * chunk_size)];
@@ -946,11 +953,11 @@ s3torrent.torrent.calculate_piece_elements = function(torrent, piece_id) {
 	return false;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_speed = function(torrent, piece_download) {
-	[ torrent.metadata.download_speed, torrent.download_speed_data ] = s3torrent.utils.calculate_speed(torrent.download_speed_data, piece_download);
+magdown.torrent.calculate_speed = function(torrent, piece_download) {
+	[ torrent.metadata.download_speed, torrent.download_speed_data ] = magdown.utils.calculate_speed(torrent.download_speed_data, piece_download);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_total_size = function(torrent) {
+magdown.torrent.calculate_total_size = function(torrent) {
 	var total_size = 0;
 	for (var file of torrent.metadata.file_list) {
 		if (file.status && (file.status == 'skip')) {
@@ -961,7 +968,7 @@ s3torrent.torrent.calculate_total_size = function(torrent) {
 	return total_size;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_downloaded_size = function(torrent) {
+magdown.torrent.calculate_downloaded_size = function(torrent) {
 	var downloaded_size = 0;
 	for (var file of torrent.metadata.file_list) {
 		if (file.status && (file.status == 'skip')) {
@@ -972,20 +979,20 @@ s3torrent.torrent.calculate_downloaded_size = function(torrent) {
 	return downloaded_size;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_piece_length = function(torrent, piece_id) {
+magdown.torrent.calculate_piece_length = function(torrent, piece_id) {
 	var length = torrent.metadata.total_size - (piece_id * torrent.metadata.piece_length);
 	return (length > torrent.metadata.piece_length) ? torrent.metadata.piece_length : length;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.chunk_offset_count = function(torrent, piece_id) {
-	var piece_length = s3torrent.torrent.calculate_piece_length(torrent, piece_id);
-	var chunk_offset_count = Math.ceil(piece_length / s3torrent.torrent.protocol.chunk_size);
+magdown.torrent.chunk_offset_count = function(torrent, piece_id) {
+	var piece_length = magdown.torrent.calculate_piece_length(torrent, piece_id);
+	var chunk_offset_count = Math.ceil(piece_length / magdown.torrent.protocol.chunk_size);
 	return chunk_offset_count;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.throw_peer_slow = function(torrent) {
-	var result_count = s3torrent.torrent.get_peer_count(torrent);
-	var peer_max_count = s3torrent.torrent.get_peer_max_count();
+magdown.torrent.throw_peer_slow = function(torrent) {
+	var result_count = magdown.torrent.get_peer_count(torrent);
+	var peer_max_count = magdown.torrent.get_peer_max_count();
 
 	var peer_count = result_count.work;
 	var peer_key_slow = '-none-';
@@ -1009,8 +1016,8 @@ s3torrent.torrent.throw_peer_slow = function(torrent) {
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_data = function(torrent, is_change_file_status) {
-	var length_data = s3torrent.file.load_data(torrent);
+magdown.torrent.calculate_data = function(torrent, is_change_file_status) {
+	var length_data = magdown.file.load_data(torrent);
 	if (length_data < 0) {
 		torrent.metadata.is_error = true;
 		torrent.metadata.is_error_text = 'make_file_path';
@@ -1075,20 +1082,20 @@ s3torrent.torrent.calculate_data = function(torrent, is_change_file_status) {
 		torrent.metadata.piece_future = torrent.metadata.piece_current; 
 	}
 
-	s3torrent.torrent.history_save(torrent);
+	magdown.torrent.history_save(torrent);
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.calculate_total_buffer = function(piece_length) {
-	if (s3torrent.torrent.used_buffer < 0) {
-		s3torrent.torrent.used_buffer = 0;
+magdown.torrent.calculate_total_buffer = function(piece_length) {
+	if (magdown.torrent.used_buffer < 0) {
+		magdown.torrent.used_buffer = 0;
 	}
-	var data_max_buffer = s3torrent.torrent.protocol.data_max_buffer * 1024 * 1024;
-	var avail_buffer = data_max_buffer - s3torrent.torrent.used_buffer;
+	var data_max_buffer = magdown.torrent.protocol.data_max_buffer * 1024 * 1024;
+	var avail_buffer = data_max_buffer - magdown.torrent.used_buffer;
 	var max_count = Math.ceil(avail_buffer / piece_length);
 	return max_count;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.save_data = function(torrent, is_force) {
+magdown.torrent.save_data = function(torrent, is_force) {
 	if ((! is_force) && (torrent.piece_buffer_check)) { return; }
 	if (torrent.metadata.is_error) { return; }
 	if (torrent.metadata.is_removed) { return; }
@@ -1130,14 +1137,14 @@ s3torrent.torrent.save_data = function(torrent, is_force) {
 		}
 		var piece_length = piece_data.data.byteLength;
 		torrent.piece_buffer_length -= piece_length;
-		s3torrent.torrent.used_buffer -= piece_length;
+		magdown.torrent.used_buffer -= piece_length;
 		file_byteLength += piece_length;
 		//------------------------------------------------------------------------------
 		if (run_save) {
 			torrent.piece_hash['piece_' + piece_data.piece_id].chunk_offset_hash = {};
 			torrent.piece_hash['piece_' + piece_data.piece_id].chunk_offset_current = 0;
 
-			var result = s3torrent.file.save_data(torrent, piece_data);
+			var result = magdown.file.save_data(torrent, piece_data);
 			if (result >= 0) {
 				torrent.piece_hash['piece_' + piece_data.piece_id].completed = true;
 			}
@@ -1156,22 +1163,22 @@ s3torrent.torrent.save_data = function(torrent, is_force) {
 	}
 	//-----------------------------------------------------------------------------------------
 	if (piece_buffer.length > 0) {
-		var is_stopped = s3torrent.torrent.check_stop_status(torrent);
+		var is_stopped = magdown.torrent.check_stop_status(torrent);
 		if (torrent.metadata.is_completed || is_stopped) {
-			s3torrent.torrent.save_data(torrent, true);
+			magdown.torrent.save_data(torrent, true);
 		} else {
-			s3torrent.utils.setTimeout(function() { s3torrent.torrent.save_data(torrent, true); }, 300);
+			magdown.utils.setTimeout(function() { magdown.torrent.save_data(torrent, true); }, 300);
 		}
 	} else {
 		torrent.piece_buffer_check = false;
 	}
 	//-----------------------------------------------------------------------------------------
-	torrent.metadata.downloaded = s3torrent.file.load_data(torrent);
-	s3torrent.torrent.history_save(torrent);
+	torrent.metadata.downloaded = magdown.file.load_data(torrent);
+	magdown.torrent.history_save(torrent);
 	return;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.get_peer_count = function(torrent) {
+magdown.torrent.get_peer_count = function(torrent) {
 	var peer_all = 0;
 	var peer_request = 0;
 	var peer_work = 0;
@@ -1188,25 +1195,25 @@ s3torrent.torrent.get_peer_count = function(torrent) {
 	return { 'all' : peer_all, 'work' : peer_work, 'request' : peer_request, 'wait' : (peer_work - peer_request) };
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.get_peer_max_count = function() {
+magdown.torrent.get_peer_max_count = function() {
 
-	if (s3torrent.torrent.protocol.peer_max_count > s3torrent.torrent.protocol.peer_max_const) {
-		s3torrent.torrent.protocol.peer_max_count = s3torrent.torrent.protocol.peer_max_const;
+	if (magdown.torrent.protocol.peer_max_count > magdown.torrent.protocol.peer_max_const) {
+		magdown.torrent.protocol.peer_max_count = magdown.torrent.protocol.peer_max_const;
 	}
 
-	var peer_max_count = s3torrent.torrent.protocol.peer_max_count;
+	var peer_max_count = magdown.torrent.protocol.peer_max_count;
 	if (peer_max_count > 5) {
 		var process_count = 0;
-		for (var torrent_key in s3torrent.torrent.downloads) {
-			var torrent = s3torrent.torrent.downloads[torrent_key];
+		for (var torrent_key in magdown.torrent.downloads) {
+			var torrent = magdown.torrent.downloads[torrent_key];
 			if (torrent) {
-				if (! s3torrent.torrent.check_stop_status(torrent)) {
+				if (! magdown.torrent.check_stop_status(torrent)) {
 					process_count++;
 				}
 			}
 		}
 		if (process_count > 0) {
-			var peer_max_const = s3torrent.torrent.protocol.peer_max_const;
+			var peer_max_const = magdown.torrent.protocol.peer_max_const;
 			if ((peer_max_count * process_count) > peer_max_const) {
 				peer_max_count = Math.ceil(peer_max_const / process_count);
 			}
@@ -1218,14 +1225,14 @@ s3torrent.torrent.get_peer_max_count = function() {
 	return peer_max_count;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.history_save = function(torrent) {
+magdown.torrent.history_save = function(torrent) {
 	if (torrent.metadata.is_removed) { return; }
 
 	var time = new Date().getTime();
-	[ torrent.metadata.download_speed, torrent.download_speed_data ] = s3torrent.utils.calculate_speed(torrent.download_speed_data);
-	s3torrent.torrent.update_toolbar_text();
+	[ torrent.metadata.download_speed, torrent.download_speed_data ] = magdown.utils.calculate_speed(torrent.download_speed_data);
+	magdown.torrent.update_toolbar_text();
 
-	if (s3torrent.torrent.check_stop_status(torrent)) {
+	if (magdown.torrent.check_stop_status(torrent)) {
 		torrent.metadata.end_time = time;
 	}
 	if ((! torrent.history_save_time) || (torrent.metadata.is_stopped)) {
@@ -1233,40 +1240,40 @@ s3torrent.torrent.history_save = function(torrent) {
 	}
 	if ((torrent.history_save_time + 1000) < time) {
 		torrent.history_save_time = time;
-		s3torrent.history.set_history(torrent.metadata.s3torrent_id, torrent.metadata);
-		s3torrent.utils.notify_observers(null, "s3torrent-change", torrent.metadata.s3torrent_id);
+		magdown.history.set_history(torrent.metadata.magdown_id, torrent.metadata);
+		magdown.utils.notify_observers(null, "magdown-change", torrent.metadata.magdown_id);
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.history_remove = function(torrent_id, force) {
-	var torrent = s3torrent.torrent.downloads[torrent_id];
+magdown.torrent.history_remove = function(torrent_id, force) {
+	var torrent = magdown.torrent.downloads[torrent_id];
 	if (torrent) {
 		torrent.metadata.is_removed = true;
-		s3torrent.torrent.download_stop(torrent);
+		magdown.torrent.download_stop(torrent);
 		if (force || (! torrent.metadata.is_completed)) {
-			s3torrent.file.delete_data(torrent, force);
+			magdown.file.delete_data(torrent, force);
 		}
-		delete s3torrent.torrent.downloads[torrent_id];
+		delete magdown.torrent.downloads[torrent_id];
 		torrent = null;
 	}
-	s3torrent.history.remove_history(torrent_id);
-	s3torrent.torrent.update_toolbar_text();
-	s3torrent.utils.notify_observers(null, "s3torrent-remove", torrent_id);
+	magdown.history.remove_history(torrent_id);
+	magdown.torrent.update_toolbar_text();
+	magdown.utils.notify_observers(null, "magdown-remove", torrent_id);
 	return true;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
-	var torrent = s3torrent.torrent.downloads[torrent_id];
+magdown.torrent.doCommand = function(torrent_id, cmd, params) {
+	var torrent = magdown.torrent.downloads[torrent_id];
 	if (! torrent) {
 		switch (cmd) {
 			case 'get_torrent_id_list':
-				return s3torrent.torrent.downloads;
+				return magdown.torrent.downloads;
 				break; 
 			case 'cmd_stop_all':
-				s3torrent.torrent.action_stop('all');	
+				magdown.torrent.action_stop('all');	
 				break; 
 			case 'cmd_start_all':
-				s3torrent.torrent.action_start('all');	
+				magdown.torrent.action_start('all');	
 				break; 
 		}
 		return; 
@@ -1276,32 +1283,32 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 	switch (cmd) {
 		case 'downloadsCmd_pauseResume':
 			if (torrent.metadata.is_stopped) {
-				s3torrent.torrent.action_start(torrent_id);
+				magdown.torrent.action_start(torrent_id);
 			} else {
-				s3torrent.torrent.action_stop(torrent_id);
+				magdown.torrent.action_stop(torrent_id);
 			}
 			break; 
 		case 'downloadsCmd_cancel':
-			s3torrent.torrent.history_remove(torrent_id);
-			s3torrent.utils.notification_box(name, s3torrent.utils.get_string('download.canceled'));
+			magdown.torrent.history_remove(torrent_id);
+			magdown.utils.notification_box(name, magdown.utils.get_string('download.canceled'));
 			break; 
 		case 'cmd_delete':
-			s3torrent.torrent.history_remove(torrent_id);
-			s3torrent.utils.notification_box(name, s3torrent.utils.get_string('download.deleted'));
+			magdown.torrent.history_remove(torrent_id);
+			magdown.utils.notification_box(name, magdown.utils.get_string('download.deleted'));
 			break; 
 		case 'downloadsCmd_retry':
-			s3torrent.torrent.download_stop(torrent);
-			s3torrent.file.delete_data(torrent, true);
+			magdown.torrent.download_stop(torrent);
+			magdown.file.delete_data(torrent, true);
 			if (params.save_dir) {
 				torrent.metadata.save_dir = params.save_dir;
 			}
 			torrent.metadata.is_completed = false;
-			s3torrent.torrent.action_start(torrent_id);
+			magdown.torrent.action_start(torrent_id);
 			break; 
 		case 'cmd_delete_files':
 			torrent.metadata.is_completed = false;
-			s3torrent.torrent.history_remove(torrent_id, true);
-			s3torrent.utils.notification_box(name, s3torrent.utils.get_string('download.deleted'));
+			magdown.torrent.history_remove(torrent_id, true);
+			magdown.utils.notification_box(name, magdown.utils.get_string('download.deleted'));
 			break; 
 		case 'downloadsCmd_show':
 			var dir = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
@@ -1317,8 +1324,8 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 			}
 
 			if (params) {
-				if (! s3torrent.file.open_file(torrent, params.file_id)) {
-					s3torrent.utils.alert(s3torrent.utils.get_string("fileNotFound"));
+				if (! magdown.file.open_file(torrent, params.file_id)) {
+					magdown.utils.alert(magdown.utils.get_string("fileNotFound"));
 				}
 			} else {
 				var dir = Components.classes["@mozilla.org/file/local;1"].createInstance(Components.interfaces.nsILocalFile);
@@ -1331,14 +1338,14 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 			}
 			break; 
 		case 'get_magnet_link':
-			var magnet_url = 'magnet:?xt=urn:btih:' + torrent.metadata.hashhexlower + '&tr=' + s3torrent.utils.urlencode(torrent.metadata.announce);
+			var magnet_url = 'magnet:?xt=urn:btih:' + torrent.metadata.hashhexlower + '&tr=' + magdown.utils.urlencode(torrent.metadata.announce);
 			return magnet_url;
 			break; 
 		case 'get_torrent_data':
 			return torrent;
 			break; 
 		case 'get_peer_count':
-			var result = s3torrent.torrent.get_peer_count(torrent);
+			var result = magdown.torrent.get_peer_count(torrent);
 			return [ result.all, result.work ];
 			break; 
 		case 'get_tracker_list':
@@ -1357,7 +1364,7 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 			return tracker_list;
 			break; 
 		case 'set_tracker_list':
-			if (! s3torrent.torrent.check_stop_status(torrent)) { break; }
+			if (! magdown.torrent.check_stop_status(torrent)) { break; }
 			torrent.metadata.announce_list = {};
 			var tracker_id = 0;
 			for (var tracker_url of params.tracker_list) {
@@ -1367,7 +1374,7 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 					tracker_id++;
 				}
 			}
-			s3torrent.torrent.history_save(torrent);
+			magdown.torrent.history_save(torrent);
 			break; 
 		case 'get_peer_list':
 			var peer_list = [];
@@ -1396,17 +1403,17 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 			if (torrent.metadata.file_list[params.file_id].status != 'done') {
 				torrent.metadata.file_list[params.file_id].status = (params.is_process) ? 'process' : 'skip';
 				if (! params.is_all) {
-					s3torrent.torrent.calculate_data(torrent, true);
+					magdown.torrent.calculate_data(torrent, true);
 					if (torrent.metadata.is_completed) {
-						s3torrent.torrent.download_stop(torrent);
+						magdown.torrent.download_stop(torrent);
 					}
 				}
 			}
 			break;
 		case 'set_file_status_all':
-			s3torrent.torrent.calculate_data(torrent, true);
+			magdown.torrent.calculate_data(torrent, true);
 			if (torrent.metadata.is_completed) {
-				s3torrent.torrent.download_stop(torrent);
+				magdown.torrent.download_stop(torrent);
 			}
 			break;
 		case 'get_torrent_info_list':
@@ -1414,10 +1421,10 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 				'torrent_name' : torrent.metadata.info.name,
 				'save_dir' : torrent.metadata.save_dir,
 				'files_count' : torrent.metadata.file_list.length,
-				'total_size' : s3torrent.utils.get_strings_to_KB_MB_GB(torrent.metadata.total_size) + ' (' + s3torrent.utils.numeral3(torrent.metadata.total_size) + ')',
+				'total_size' : magdown.utils.get_strings_to_KB_MB_GB(torrent.metadata.total_size) + ' (' + magdown.utils.numeral3(torrent.metadata.total_size) + ')',
 				'progress' : Math.floor((torrent.metadata.downloaded*100)/torrent.metadata.total_size) + '%',
 				'hash' : torrent.metadata.hashhexlower,
-				'magnet_link' : 'magnet:?xt=urn:btih:' + torrent.metadata.hashhexlower + '&tr=' + s3torrent.utils.urlencode(torrent.metadata.announce),
+				'magnet_link' : 'magnet:?xt=urn:btih:' + torrent.metadata.hashhexlower + '&tr=' + magdown.utils.urlencode(torrent.metadata.announce),
 				'publisher' : torrent.metadata.publisher || '---',
 				'publisher_url' : torrent.metadata['publisher-url'] || '',
 				'created' : (new Date(torrent.metadata['creation date'] * 1000)).toLocaleString(),
@@ -1429,13 +1436,13 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 			return result;
 			break;
 		case 'get_total_size':
-			return s3torrent.torrent.calculate_total_size(torrent);
+			return magdown.torrent.calculate_total_size(torrent);
 			break;
 		case 'get_downloaded_size':
-			return s3torrent.torrent.calculate_downloaded_size(torrent);
+			return magdown.torrent.calculate_downloaded_size(torrent);
 			break;
 		case 'cmd_save_metadata':
-			var wm_window = s3torrent.utils.get_window();
+			var wm_window = magdown.utils.get_window();
 			var field_list = ["announce", "announce-list", "comment", "created by", "creation date", "encoding", "info", "publisher", "publisher-url", "httpseeds", "url-list"];
 			var metadata = {};
 			for (var field of field_list) {
@@ -1443,24 +1450,24 @@ s3torrent.torrent.doCommand = function(torrent_id, cmd, params) {
 					metadata[field] = torrent.metadata[field];
 				}
 			}
-			var data_save = new Uint8Array(s3torrent.bencode.encode(metadata));
-			if (s3torrent.file.save_metadata(wm_window, torrent, data_save)) {
-				s3torrent.utils.notification_box(torrent.metadata.info.name, s3torrent.utils.get_string('metadata.saved'));
+			var data_save = new Uint8Array(magdown.bencode.encode(metadata));
+			if (magdown.file.save_metadata(wm_window, torrent, data_save)) {
+				magdown.utils.notification_box(torrent.metadata.info.name, magdown.utils.get_string('metadata.saved'));
 			}
 			break;
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.request_observer = {
+magdown.torrent.request_observer = {
 	observe: function (aSubject, aTopic, aData) {
 		//-----------------------------------------------------------------------
-		if (aTopic == 's3torrent-magnet-open-url') {
+		if (aTopic == 'magdown-magnet-open-url') {
 			var aURI = aSubject.QueryInterface(Components.interfaces.nsIURI);
 			if (! aURI) { return; }
 
 			var url = aURI.spec;
-			if (/urn\:btih\:[\w\d]{32}/.test(url) && s3torrent.utils.prefs.getBoolPref('magnet_uri_association')) {
-				s3torrent.utils.add_new_torrent({ 'data' : url, 'is_url' : true, 'referrer_url' : '' });
+			if (/urn\:btih\:[\w\d]{32}/.test(url) && magdown.utils.prefs.getBoolPref('magnet_uri_association')) {
+				magdown.utils.add_new_torrent({ 'data' : url, 'is_url' : true, 'referrer_url' : '' });
 			} else {
 				try {
 					var expsvb = Components.classes["@mozilla.org/uriloader/external-protocol-service;1"].getService(Components.interfaces.nsIExternalProtocolService);
@@ -1473,20 +1480,20 @@ s3torrent.torrent.request_observer = {
 			}
 		}
 		//-----------------------------------------------------------------------
-		else if (aTopic == 's3torrent-add-new-torrent') {
+		else if (aTopic == 'magdown-add-new-torrent') {
 			var params = aSubject.wrappedJSObject;
-			s3torrent.utils.add_new_torrent_run(params);
+			magdown.utils.add_new_torrent_run(params);
 		}
 		//-----------------------------------------------------------------------
 		else if (aTopic == 'http-on-examine-response' ) {
-			var is_torrent = s3torrent.utils.prefs.getBoolPref('torrent_file_association');
-			var is_magnet = s3torrent.utils.prefs.getBoolPref('magnet_uri_association');
+			var is_torrent = magdown.utils.prefs.getBoolPref('torrent_file_association');
+			var is_magnet = magdown.utils.prefs.getBoolPref('magnet_uri_association');
 			if (! is_torrent && ! is_magnet) { return; }
 
 			try {
 				var httpChannel = aSubject.QueryInterface(Components.interfaces.nsIHttpChannel);
 				if (! httpChannel) { return; }
-				if (! s3torrent.torrent.check_httpChannel_window(httpChannel)) { return; }
+				if (! magdown.torrent.check_httpChannel_window(httpChannel)) { return; }
 
 				var url = httpChannel.URI.spec;
 				var content_type = httpChannel.getResponseHeader("Content-Type");
@@ -1494,56 +1501,56 @@ s3torrent.torrent.request_observer = {
 
 				if ((is_torrent && content_type.indexOf("x-bittorrent") != -1) || (is_magnet && content_type.indexOf("magnet") != -1)) {
 					httpChannel.cancel(Components.results.NS_BINDING_ABORTED);
-					s3torrent.utils.add_new_torrent({ 'data' : url, 'is_url' : true, 'referrer_url' : referrer_url });
+					magdown.utils.add_new_torrent({ 'data' : url, 'is_url' : true, 'referrer_url' : referrer_url });
 				}
 				else if ((is_torrent && /^[^\?]+\.torrent$/.test(url)) || (is_magnet && /^magnet\:/.test(url))) {
 					httpChannel.cancel(Components.results.NS_BINDING_ABORTED);
-					s3torrent.utils.add_new_torrent({ 'data' : url, 'is_url' : true, 'referrer_url' : referrer_url });
+					magdown.utils.add_new_torrent({ 'data' : url, 'is_url' : true, 'referrer_url' : referrer_url });
 				}
 			} catch(e) {
 			}
 		}
 		//-----------------------------------------------------------------------
 		else if(aTopic == 'http-on-modify-request') {
-			var is_torrent = s3torrent.utils.prefs.getBoolPref('torrent_file_association');
-			var is_magnet = s3torrent.utils.prefs.getBoolPref('magnet_uri_association');
+			var is_torrent = magdown.utils.prefs.getBoolPref('torrent_file_association');
+			var is_magnet = magdown.utils.prefs.getBoolPref('magnet_uri_association');
 			if (! is_torrent && ! is_magnet) { return; }
 
 			try {
 				var httpChannel = aSubject.QueryInterface(Components.interfaces.nsIHttpChannel);
 				if (! httpChannel) { return; }
-				if (! s3torrent.torrent.check_httpChannel_window(httpChannel)) { return; }
+				if (! magdown.torrent.check_httpChannel_window(httpChannel)) { return; }
 
 				var url = httpChannel.URI.spec;
 				var referrer_url = (httpChannel.referrer && httpChannel.referrer.spec) ? httpChannel.referrer.spec : '';
 
 				if ((is_torrent && /^[^\?]+\.torrent$/.test(url)) || (is_magnet && /^magnet\:/.test(url))) {
 					httpChannel.cancel(Components.results.NS_BINDING_ABORTED);
-					s3torrent.utils.add_new_torrent({ 'data' : url, 'is_url' : true, 'referrer_url' : referrer_url });
+					magdown.utils.add_new_torrent({ 'data' : url, 'is_url' : true, 'referrer_url' : referrer_url });
 				}
 			} catch(e) {
 			}
 		}
 		//-----------------------------------------------------------------------
 		else if(aData == 'torrent.peer_max_count') {
-			s3torrent.torrent.protocol.peer_max_count = s3torrent.utils.prefs.getIntPref('torrent.peer_max_count', 20);
-			if (s3torrent.torrent.protocol.peer_max_count > s3torrent.torrent.protocol.peer_max_const) {
-				s3torrent.torrent.protocol.peer_max_count = s3torrent.torrent.protocol.peer_max_const;
-				s3torrent.utils.prefs.setIntPref('torrent.peer_max_count', s3torrent.torrent.protocol.peer_max_const);
+			magdown.torrent.protocol.peer_max_count = magdown.utils.prefs.getIntPref('torrent.peer_max_count', 20);
+			if (magdown.torrent.protocol.peer_max_count > magdown.torrent.protocol.peer_max_const) {
+				magdown.torrent.protocol.peer_max_count = magdown.torrent.protocol.peer_max_const;
+				magdown.utils.prefs.setIntPref('torrent.peer_max_count', magdown.torrent.protocol.peer_max_const);
 			}
 		}
 		//-----------------------------------------------------------------------
 		else if(aData == 'torrent.data_max_buffer') {
-			s3torrent.torrent.protocol.data_max_buffer = s3torrent.utils.prefs.getIntPref('torrent.data_max_buffer');
+			magdown.torrent.protocol.data_max_buffer = magdown.utils.prefs.getIntPref('torrent.data_max_buffer');
 		}
 		//-----------------------------------------------------------------------
 		else if(aData == 'show_counter_in_toolbarbutton') {
-			s3torrent.torrent.update_toolbar_text();
+			magdown.torrent.update_toolbar_text();
 		}
 	}
 };
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.check_httpChannel_window = function(httpChannel) {
+magdown.torrent.check_httpChannel_window = function(httpChannel) {
 	//-----------------------------------------------------------------------
 	var loadContext, associatedWindow;
 	try {
@@ -1578,23 +1585,23 @@ s3torrent.torrent.check_httpChannel_window = function(httpChannel) {
 	return false;
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.request_observer_init = function() {
+magdown.torrent.request_observer_init = function() {
 	var observerService = Components.classes["@mozilla.org/observer-service;1"].getService(Components.interfaces.nsIObserverService);
-	observerService.addObserver(s3torrent.torrent.request_observer, 's3torrent-magnet-open-url', false);
-	observerService.addObserver(s3torrent.torrent.request_observer, 's3torrent-add-new-torrent', false);
-	observerService.addObserver(s3torrent.torrent.request_observer, 'http-on-examine-response', false);
-	observerService.addObserver(s3torrent.torrent.request_observer, 'http-on-modify-request', false);
+	observerService.addObserver(magdown.torrent.request_observer, 'magdown-magnet-open-url', false);
+	observerService.addObserver(magdown.torrent.request_observer, 'magdown-add-new-torrent', false);
+	observerService.addObserver(magdown.torrent.request_observer, 'http-on-examine-response', false);
+	observerService.addObserver(magdown.torrent.request_observer, 'http-on-modify-request', false);
 
 	try {
-		if (!("addObserver" in s3torrent.utils.prefs)) {
-			s3torrent.utils.prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
+		if (!("addObserver" in magdown.utils.prefs)) {
+			magdown.utils.prefs.QueryInterface(Components.interfaces.nsIPrefBranch2);
 		}
-		s3torrent.utils.prefs.addObserver("", s3torrent.torrent.request_observer, false);
+		magdown.utils.prefs.addObserver("", magdown.torrent.request_observer, false);
 	} catch(e) {
 	}
 }
 //-----------------------------------------------------------------------------------
-s3torrent.torrent.update_toolbar_text = function() {
+magdown.torrent.update_toolbar_text = function() {
 	try {
 		var wm = Components.classes["@mozilla.org/appshell/window-mediator;1"].getService(Components.interfaces.nsIWindowMediator);
 		var e = wm.getEnumerator("navigator:browser");
@@ -1603,10 +1610,10 @@ s3torrent.torrent.update_toolbar_text = function() {
 		var complete_count = 0;
 		var is_error = false;
 		var is_stop = true;
-		var show_counter = s3torrent.utils.prefs.getBoolPref('show_counter_in_toolbarbutton');
+		var show_counter = magdown.utils.prefs.getBoolPref('show_counter_in_toolbarbutton');
 
-		for (var torrent_key in s3torrent.torrent.downloads) {
-			var torrent = s3torrent.torrent.downloads[torrent_key];
+		for (var torrent_key in magdown.torrent.downloads) {
+			var torrent = magdown.torrent.downloads[torrent_key];
 			if (torrent) {
 				if (torrent.metadata.is_completed) {
 					complete_count++;
@@ -1616,7 +1623,7 @@ s3torrent.torrent.update_toolbar_text = function() {
 				if (torrent.metadata.is_error) {
 					is_error = true;
 				}
-				if (! s3torrent.torrent.check_stop_status(torrent)) {
+				if (! magdown.torrent.check_stop_status(torrent)) {
 					is_stop = false;
 				}
 			}
@@ -1624,8 +1631,8 @@ s3torrent.torrent.update_toolbar_text = function() {
 
 		while (e.hasMoreElements()) {
 			var win = e.getNext();
-			var button_text = win.document.getElementById('s3torrent_toolbar_button_text');
-			var button_image = win.document.getElementById('s3torrent_toolbar_button');
+			var button_text = win.document.getElementById('magdown_toolbar_button_text');
+			var button_image = win.document.getElementById('magdown_toolbar_button');
 			if (button_text) {
 				if (show_counter && (process_count || complete_count)) {
 					button_text.hidden = false;
@@ -1635,7 +1642,7 @@ s3torrent.torrent.update_toolbar_text = function() {
 				}
 			}
 			if (button_image) {
-				button_image.setAttribute('tooltiptext', s3torrent.utils.get_string('extensions.s3torrent@tornado.name') + ' (' + process_count + ':' + complete_count + ')');
+				button_image.setAttribute('tooltiptext', magdown.utils.get_string('extensions.magdown@tornado.name') + ' (' + process_count + ':' + complete_count + ')');
 
 				button_image.removeAttribute('is_error');
 				button_image.removeAttribute('is_stop');

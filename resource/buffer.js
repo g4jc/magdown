@@ -1,18 +1,18 @@
 this.EXPORTED_SYMBOLS = [ "Buffer" ];
 
-var s3torrent = {};
+var magdown = {};
 
 //-----------------------------------------------------------------------------------
-s3torrent.Buffer = function() {
+magdown.Buffer = function() {
 	this.max_buffer_size = 80000;
 	this.buffer_data = [];
 	this.buffer_is_work = false;
 }
 
-this.Buffer = s3torrent.Buffer;
+this.Buffer = magdown.Buffer;
 
 //-----------------------------------------------------------------------------------
-s3torrent.Buffer.prototype = {
+magdown.Buffer.prototype = {
 	clear: function() {
 		this.buffer_data = [];
 	},
@@ -37,7 +37,7 @@ s3torrent.Buffer.prototype = {
 /*
 var length = 10; // data.byteLength;//arr.length - startOffset;
 for (var i=0; i<length; i++) {
-s3torrent.utils.console_log('onRead=55-1 -' + i + '= ' + new Uint8Array(data)[i]);
+magdown.utils.console_log('onRead=55-1 -' + i + '= ' + new Uint8Array(data)[i]);
 }
 */
 		//----------------------------------------------------------------------------
