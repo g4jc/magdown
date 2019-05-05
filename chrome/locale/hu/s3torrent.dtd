@@ -1,0 +1,89 @@
+﻿<!ENTITY title.label "Torrent Tornado">
+<!ENTITY open.torrent.history.label "Letöltés Történet">
+<!ENTITY settings.label "Beállítások...">
+<!ENTITY add.new.torrent.label "Új torent hozzáadása">
+
+<!ENTITY new.torrent.selector.url.label "URL (http, ftp, magnet) vagy Hash">
+<!ENTITY new.torrent.selector.file.label "Fájl">
+<!ENTITY new.torrent.selector.file.open.label "Fájl megnyitása">
+<!ENTITY new.torrent.selector.file.list.label "Fájl lista">
+<!ENTITY new.torrent.next.step.label "Következõ lépés">
+<!ENTITY new.torrent.prev.step.label "Elõzõ lépés">
+<!ENTITY new.torrent.skip.step.label "Start!">
+<!ENTITY new.torrent.skip.step.later.label "Letöltés később">
+
+<!ENTITY cmd.stop.all.label "Összes leállítása">
+<!ENTITY cmd.resume.all.label "Összes folytatása">
+<!ENTITY cmd.cancel.all.label "Összes folyamat megszakítása">
+<!ENTITY cmd.remove.all.label "Elkészültek törlése">
+
+<!ENTITY cmd.pause.label "Szünet">
+<!ENTITY cmd.resume.label "Folytatás">
+<!ENTITY cmd.cancel.label "Mégsem">
+<!ENTITY cmd.show.label "Tartalmazó mappa megnyítása">
+<!ENTITY cmd.retry.label "Próbálja újra">
+<!ENTITY cmd.goToDownloadPage.label "Ugrás a letöltési oldalra">
+<!ENTITY cmd.copyDownloadLink.label "Letöltési link másolása">
+<!ENTITY cmd.removeFromHistory.label "Elõzmények eltávolítása">
+<!ENTITY cmd.select.all.label "Összes kiválasztása">
+<!ENTITY cmd.delete.label "Törlés a rendszerbõl">
+<!ENTITY cmd.open.label "Megnyitás">
+<!ENTITY cmd.copy.label "Másolás">
+<!ENTITY cmd.trackers.label "Tracker változtatása">
+<!ENTITY cmd.save.metadata.label "Torrent fájl adatainak mentése">
+
+<!ENTITY fromTip.label "tól:">
+<!ENTITY toTip.label "ig:">
+<!ENTITY sizeTip.label "Fájl mérete:">
+<!ENTITY percentTip.label "Elkészült százalék:">
+<!ENTITY avgSpeedTip.label "Átlagsebesség:">
+<!ENTITY timeTip.label "Hátralévõ idõ:">
+
+<!ENTITY downloadsLibrary.TorrentName.label "Név">
+<!ENTITY downloadsLibrary.SaveDir.label "Mentési könyvtár">
+<!ENTITY downloadsLibrary.Size.label "Méret">
+<!ENTITY downloadsLibrary.DateTime.label "Dátum">
+<!ENTITY downloadsLibrary.URL.label "URL">
+<!ENTITY downloadsLibrary.Progress.label "Haladás">
+<!ENTITY downloadsLibrary.TimeRemaining.label "Hátralévõ idõ">
+<!ENTITY downloadsLibrary.Peers.label "Peer-ek">
+<!ENTITY downloadsLibrary.Speed.label "Sebesség">
+<!ENTITY downloadsLibrary.Percent.label "&#037;">
+<!ENTITY downloadsLibrary.Info.label "Általános információ">
+
+<!ENTITY downloadsLibrary.TorrentInfo.Files.label "Fájl">
+<!ENTITY downloadsLibrary.TorrentInfo.FileName.label "Fájl neve">
+<!ENTITY downloadsLibrary.TorrentInfo.Address.label "Cím">
+<!ENTITY downloadsLibrary.TorrentInfo.Client.label "Ügyfél neve">
+<!ENTITY downloadsLibrary.TorrentInfo.MagnetLink.label "Magnet link">
+<!ENTITY downloadsLibrary.TorrentInfo.FilesCount.label "Fájlok száma">
+<!ENTITY downloadsLibrary.TorrentInfo.Hash.label "Hash">
+<!ENTITY downloadsLibrary.TorrentInfo.Publisher.label "Kiadó">
+<!ENTITY downloadsLibrary.TorrentInfo.PublisherUrl.label "Kiadó (URL)">
+<!ENTITY downloadsLibrary.TorrentInfo.Created.label "Létrehozva">
+<!ENTITY downloadsLibrary.TorrentInfo.Comment.label "Megjegyzés">
+<!ENTITY downloadsLibrary.TorrentInfo.Error.label "Hiba">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadPage.label "Letöltési oldal">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadLink.label "Letöltési link">
+<!ENTITY downloadsLibrary.TorrentInfo.Trackers.label "Tracker">
+
+<!ENTITY pShowButtons.label "Mutassa ezeket a gombokat:">
+<!ENTITY pSwitchDownloadsTab.label "Váltás a letöltések fülre a letöltés megkezdésekor">
+<!ENTITY pDateTimeFormat.label "Dátum formátuma:">
+<!ENTITY pDefaultSaveDir.label "Alapértelmezett mentési könyvtár:">
+<!ENTITY pDefaultSelectDir.label "Válassza ki">
+<!ENTITY pDefaultSaveDirReset.label "Visszaállítás">
+<!ENTITY pMaximumNumberPeers.label "Peer-ek maximális száma (maximum 500):">
+<!ENTITY pMagnetURIassociation.label "Társítás a Magnet-URL-hez">
+<!ENTITY pTorrentFileTypeAssociation.label "Társítás a .torrent fájlhoz">
+<!ENTITY pDataMaxBuffer.label "Maximális memória cache méret:">
+<!ENTITY pDataMaxBufferMB.label "MB">
+<!ENTITY pQuicklyStartDownload.label "Gyors letöltés indítása (letöltés indítása a letöltés varázsló kihagyásával)">
+<!ENTITY pShowCounterToolbarbutton.label "Számláló mutatása az eszköztárgombon">
+<!ENTITY pDisableNotifications.label "Értesítés tíltása">
+<!ENTITY pSpeedLimitAll.label "Maximális letöltési sebesség (teljes):">
+<!ENTITY pSpeedLimitOne.label "Maximális letöltési sebesség (egyetlen torrent):">
+<!ENTITY pSpeedLimitDescription.label "* Minél alacsonyabb az érték, annál nagyobb az eltérés; 0 = korlátlan">
+<!ENTITY pSpeedLimitAbbr.label "KB/mp">
+
+<!ENTITY pGeneralTab.label "Általános">

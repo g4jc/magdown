@@ -1,0 +1,19 @@
+updated: Hungarian locale (thanks Balogh Béla)
+fixed: minor bug fixes
+
+---
+++updated: Germany locale (thanks Marcin Lisson)
+++updated: Brazilian Portuguese locale (thanks Marcelo Ghelman)
+++updated: Hungarian locale (thanks Balogh Béla)
+++updated: French locale (thanks Jack Black)
+++updated: Slovak locale (thanks Peter Skladaný)
+++updated: Polish locale (thanks Maciej Bojakowski)
+++updated: Ukranian locale (thanks Dmytro Rohachov)
++?updated: Chinese zh-CN locale (thanks 基木 <dsyo2008>) 
++?updated: Italian locale (thanks Mr Wolf)
+++updated: Chinese Taiwan locale (thanks Jose Sun)
+++updated: Spanish locale (thanks Carlos Villarrubia)
+++updated: Japanese locale (thanks pulsmz)
+++updated: Czech locale (thanks Jakub Rychecky)
+++updated: Swedish locale (thanks Johan Forsberg)
+++updated: Nederlands locale (thanks Mark Heijl)

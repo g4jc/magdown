@@ -1,0 +1,134 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://s3torrent/skin/settings.css" type="text/css"?>
+<!DOCTYPE window [
+	<!ENTITY % s3torrentDTD SYSTEM "chrome://s3torrent/locale/s3torrent.dtd" >
+	%s3torrentDTD;
+	<!ENTITY % advertisementDTD SYSTEM "chrome://s3torrent/locale/advertisement.dtd" >
+	%advertisementDTD;
+]>
+
+<prefwindow id="s3torrent_prefs" title="&title.label; - &settings.label;" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" onload="s3torrent.init();">
+	<script type="application/x-javascript" src="chrome://s3torrent/content/settings.js"/>
+
+	<prefpane id="s3torrent_pref_pane">
+		<preferences>
+	    		<preference id="pref_default_save_dir" name="extensions.s3torrent.torrent.default_save_dir" type="string" />
+	    		<preference id="pref_quickly_start_download" name="extensions.s3torrent.torrent.quickly_start_download" type="bool" />
+			<preference id="pref_peer_max_count" name="extensions.s3torrent.torrent.peer_max_count" type="int" />
+			<preference id="pref_data_max_buffer" name="extensions.s3torrent.torrent.data_max_buffer" type="int" />
+			<preference id="pref_speed_limit_all" name="extensions.s3torrent.torrent.speed_limit_all" type="int" />
+			<preference id="pref_speed_limit_one" name="extensions.s3torrent.torrent.speed_limit_one" type="int" />
+	    		<preference id="pref_showAddNewTorrent" name="extensions.s3torrent.DL.showAddNewTorrent" type="bool" />
+	    		<preference id="pref_showPauseButton" name="extensions.s3torrent.DL.showPauseButton" type="bool" />
+	    		<preference id="pref_showResumeButton" name="extensions.s3torrent.DL.showResumeButton" type="bool" />
+	    		<preference id="pref_showCancelButton" name="extensions.s3torrent.DL.showCancelButton" type="bool" />
+	    		<preference id="pref_showRemoveButton" name="extensions.s3torrent.DL.showRemoveButton" type="bool" />
+	    		<preference id="pref_switchDownloadsTab" name="extensions.s3torrent.DL.switchDownloadsTab" type="bool" />
+	    		<preference id="pref_dateTimeFormat" name="extensions.s3torrent.DL.dateTimeFormat" type="string" />
+	    		<preference id="pref_magnet_uri_association" name="extensions.s3torrent.magnet_uri_association" type="bool" />
+	    		<preference id="pref_torrent_file_association" name="extensions.s3torrent.torrent_file_association" type="bool" />
+	    		<preference id="pref_show_counter_in_toolbarbutton" name="extensions.s3torrent.show_counter_in_toolbarbutton" type="bool" />
+	    		<preference id="pref_disable_notifications" name="extensions.s3torrent.disable_notifications" type="bool" />
+	    		<preference id="pref_advertisement" name="extensions.s3torrent.advertisement" type="string" />
+		</preferences>
+
+		<tabbox id="s3torrent_preference_tabbox">
+			<tabs>
+				<tab label="&pGeneralTab.label;"/>
+				<tab label="&adv_title.label;"/>
+			</tabs>
+			<tabpanels>
+				<tabpanel id="generalTab">
+					<vbox>
+					<groupbox>
+						<vbox>
+						<label value="&pDefaultSaveDir.label;"/>
+						<hbox align="center">
+							<textbox disabled="true" preference="pref_default_save_dir" id="default_save_dir" size="50" />
+							<button label="&pDefaultSelectDir.label;" oncommand="s3torrent.select_dir();"/>
+							<button label="&pDefaultSaveDirReset.label;" oncommand="s3torrent.reset_dir();"/>
+						</hbox>
+						<checkbox label="&pQuicklyStartDownload.label;" id="quickly_start_download" preference="pref_quickly_start_download"/>
+						</vbox>
+					</groupbox>
+					<groupbox>
+						<vbox>
+						<checkbox label="&pTorrentFileTypeAssociation.label;" id="torrent_file_association" preference="pref_torrent_file_association"/>
+						<checkbox label="&pMagnetURIassociation.label;" id="magnet_uri_association" preference="pref_magnet_uri_association"/>
+						<hbox align="center">
+							<label value="&pDataMaxBuffer.label;"/>
+							<textbox id="data_max_buffer" maxlength="4"  width="60" type="number" increment="1" preference="pref_data_max_buffer"/>
+							<label value="&pDataMaxBufferMB.label;"/>
+						</hbox>
+						<hbox align="center">
+							<label value="&pMaximumNumberPeers.label;"/>
+							<textbox id="peer_max_count" maxlength="4"  width="60" type="number" increment="1" max="500" min="1" preference="pref_peer_max_count"/>
+						</hbox>
+						<hbox align="center">
+							<label value="*"/><label value="&pSpeedLimitAll.label;"/>
+							<textbox id="speed_limit_all" maxlength="4"  width="60" type="number" increment="100" min="0" preference="pref_speed_limit_all"/>
+							<label value="&pSpeedLimitAbbr.label;"/>
+						</hbox>
+						<hbox align="center">
+							<label value="*"/><label value="&pSpeedLimitOne.label;"/>
+							<textbox id="speed_limit_one" maxlength="4"  width="60" type="number" increment="100" min="0" preference="pref_speed_limit_one"/>
+							<label value="&pSpeedLimitAbbr.label;"/>
+						</hbox>
+						<label style="padding-left: 20px; font-size: 0.9em;" value="&pSpeedLimitDescription.label;"/>
+						</vbox>
+					</groupbox>
+					<groupbox flex="1">
+						<vbox>
+						<checkbox label="&pDisableNotifications.label;" id="disable_notifications" preference="pref_disable_notifications"/>
+						<checkbox label="&pShowCounterToolbarbutton.label;" id="show_counter_in_toolbarbutton" preference="pref_show_counter_in_toolbarbutton"/>
+						<checkbox label="&pSwitchDownloadsTab.label;" id="switchDownloadsTab" preference="pref_switchDownloadsTab"/>
+						<hbox align="center">
+						<label value="&pDateTimeFormat.label;" id="dateTimeFormatDL_label"/>
+						<menulist id="dateTimeFormatDL" preference="pref_dateTimeFormat">
+							<menupopup>
+								<menuitem label="" value="%H:%M:%S - %d.%m.%Y"/>
+								<menuitem label="" value="%H:%M:%S - %Y.%m.%d"/>
+								<menuitem label="" value="%H:%M:%S - %d/%m/%Y"/>
+								<menuitem label="" value="%H:%M:%S - %Y/%m/%d"/>
+								<menuitem label="" value="%H:%M:%S - %m/%d/%Y"/>
+								<menuitem label="" value="%d.%m.%Y - %H:%M:%S"/>
+								<menuitem label="" value="%Y.%m.%d - %H:%M:%S"/>
+								<menuitem label="" value="%d/%m/%Y - %H:%M:%S"/>
+								<menuitem label="" value="%Y/%m/%d - %H:%M:%S"/>
+							</menupopup>
+						</menulist>
+						</hbox>
+						</vbox>
+					</groupbox>
+					<groupbox>
+						<caption class="prefs"><label value="&pShowButtons.label;" id="showDLButton_label"/></caption>
+						<vbox>
+						<spacer flex="1"/>
+						<hbox>
+							<hbox width="20"/>
+							<vbox>
+								<checkbox label="&add.new.torrent.label;" id="showDLaddNewTorrent" preference="pref_showAddNewTorrent"/>
+								<checkbox label="&cmd.stop.all.label;" id="showDLpauseButton" preference="pref_showPauseButton"/>
+								<checkbox label="&cmd.resume.all.label;" id="showDLresumeButton" preference="pref_showResumeButton"/>
+								<checkbox label="&cmd.cancel.all.label;" id="showDLcancelButton" preference="pref_showCancelButton"/>
+								<checkbox label="&cmd.remove.all.label;" id="showDLremoveButton" preference="pref_showRemoveButton"/>
+							</vbox>
+						</hbox>
+						<hbox height="10" flex="1"/>
+						</vbox>
+					</groupbox>
+					</vbox>
+				</tabpanel>
+				<tabpanel id="advertisementTab">
+					<vbox>
+						<label id="adv_is_enabled" style="border: none;" value="&adv_is_enabled.label;"/>
+						<label id="adv_customization" style="border: none;" class="text-link" href="http://thisadsfor.us/optout?t=210&amp;u=49499&amp;key=d27a5d5aa528b6d91d" value="&adv_customization.label;"/>
+						<label id="adv_is_disabled" value="&adv_is_disabled.label;"/>
+						<button label="&adv_change_status.label;" oncommand="s3torrent.advertisement();"/>
+					</vbox>
+				</tabpanel>
+			</tabpanels>
+		</tabbox>
+	</prefpane>
+</prefwindow>

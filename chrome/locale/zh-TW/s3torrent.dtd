@@ -1,0 +1,89 @@
+<!ENTITY title.label "Torrent Tornado">
+<!ENTITY open.torrent.history.label "下載記錄">
+<!ENTITY settings.label "設定">
+<!ENTITY add.new.torrent.label "加入新 Torrnet">
+
+<!ENTITY new.torrent.selector.url.label "網址 (http, ftp, magnet) 或 Hash 編碼">
+<!ENTITY new.torrent.selector.file.label "檔案">
+<!ENTITY new.torrent.selector.file.open.label "開啟舊檔">
+<!ENTITY new.torrent.selector.file.list.label "File list">
+<!ENTITY new.torrent.next.step.label "下一步">
+<!ENTITY new.torrent.prev.step.label "上一步">
+<!ENTITY new.torrent.skip.step.label "開始！">
+<!ENTITY new.torrent.skip.step.later.label "稍後下載">
+
+<!ENTITY cmd.stop.all.label "全部停止">
+<!ENTITY cmd.resume.all.label "全部續傳">
+<!ENTITY cmd.cancel.all.label "取消所有下載中項目">
+<!ENTITY cmd.remove.all.label "清除所有已完成項目">
+
+<!ENTITY cmd.pause.label "暫停">
+<!ENTITY cmd.resume.label "續傳">
+<!ENTITY cmd.cancel.label "取消">
+<!ENTITY cmd.show.label "開啟所在資料夾">
+<!ENTITY cmd.retry.label "重試">
+<!ENTITY cmd.goToDownloadPage.label "連到來源網站">
+<!ENTITY cmd.copyDownloadLink.label "複製下載鏈結">
+<!ENTITY cmd.removeFromHistory.label "從歷史記錄中移除">
+<!ENTITY cmd.select.all.label "全選">
+<!ENTITY cmd.delete.label "從系統中刪除">
+<!ENTITY cmd.open.label "開啟">
+<!ENTITY cmd.copy.label "複製">
+<!ENTITY cmd.trackers.label "變更 Trackers">
+<!ENTITY cmd.save.metadata.label "Save metadata torrent file">
+
+<!ENTITY fromTip.label "來源:">
+<!ENTITY toTip.label "儲存至:">
+<!ENTITY sizeTip.label "檔案大小:">
+<!ENTITY percentTip.label "下載進度:">
+<!ENTITY avgSpeedTip.label "平均速度:">
+<!ENTITY timeTip.label "剩餘時間:">
+
+<!ENTITY downloadsLibrary.TorrentName.label "檔名">
+<!ENTITY downloadsLibrary.SaveDir.label "儲存目錄">
+<!ENTITY downloadsLibrary.Size.label "大小">
+<!ENTITY downloadsLibrary.DateTime.label "日期">
+<!ENTITY downloadsLibrary.URL.label "網址">
+<!ENTITY downloadsLibrary.Progress.label "下載進度">
+<!ENTITY downloadsLibrary.TimeRemaining.label "剩餘時間">
+<!ENTITY downloadsLibrary.Peers.label "下載者 (Peers)">
+<!ENTITY downloadsLibrary.Speed.label "下載速度">
+<!ENTITY downloadsLibrary.Percent.label "&#037;">
+<!ENTITY downloadsLibrary.Info.label "基本資訊">
+
+<!ENTITY downloadsLibrary.TorrentInfo.Files.label "檔案">
+<!ENTITY downloadsLibrary.TorrentInfo.FileName.label "檔名">
+<!ENTITY downloadsLibrary.TorrentInfo.Address.label "網址">
+<!ENTITY downloadsLibrary.TorrentInfo.Client.label "用戶端名稱">
+<!ENTITY downloadsLibrary.TorrentInfo.MagnetLink.label "Magnet 鏈結">
+<!ENTITY downloadsLibrary.TorrentInfo.FilesCount.label "檔案總數">
+<!ENTITY downloadsLibrary.TorrentInfo.Hash.label "Hash 編碼">
+<!ENTITY downloadsLibrary.TorrentInfo.Publisher.label "發佈者">
+<!ENTITY downloadsLibrary.TorrentInfo.PublisherUrl.label "發佈者 (網址)">
+<!ENTITY downloadsLibrary.TorrentInfo.Created.label "建立時間">
+<!ENTITY downloadsLibrary.TorrentInfo.Comment.label "備註">
+<!ENTITY downloadsLibrary.TorrentInfo.Error.label "錯誤">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadPage.label "來源網站">
+<!ENTITY downloadsLibrary.TorrentInfo.DownloadLink.label "下載網址">
+<!ENTITY downloadsLibrary.TorrentInfo.Trackers.label "Trackers">
+
+<!ENTITY pShowButtons.label "主畫面顯示下列按鈕:">
+<!ENTITY pSwitchDownloadsTab.label "下載開始時切換到下載分頁">
+<!ENTITY pDateTimeFormat.label "日期格式:">
+<!ENTITY pDefaultSaveDir.label "預設下載目錄:">
+<!ENTITY pDefaultSelectDir.label "選擇">
+<!ENTITY pDefaultSaveDirReset.label "重設">
+<!ENTITY pMaximumNumberPeers.label "可連接的最大下載者 (Peers) 數 (不可超過 500):">
+<!ENTITY pMagnetURIassociation.label "Magnet 鏈結關聯">
+<!ENTITY pTorrentFileTypeAssociation.label ".torrent 檔案關聯">
+<!ENTITY pDataMaxBuffer.label "最大快取記憶體大小:">
+<!ENTITY pDataMaxBufferMB.label "MB">
+<!ENTITY pQuicklyStartDownload.label "快速下載 (直接開始下載檔案，不使用精靈一步步引導)">
+<!ENTITY pShowCounterToolbarbutton.label "Show counter on the toolbar button">
+<!ENTITY pDisableNotifications.label "Disable notifications">
+<!ENTITY pSpeedLimitAll.label "Maximum download speed (total):">
+<!ENTITY pSpeedLimitOne.label "Maximum download speed (single torrent):">
+<!ENTITY pSpeedLimitDescription.label "* The lower the value, the greater the deviation; 0 = unlimited">
+<!ENTITY pSpeedLimitAbbr.label "KB/秒">
+
+<!ENTITY pGeneralTab.label "General">

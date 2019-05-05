@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+	<Description about="urn:mozilla:install-manifest">
+		<em:id>s3torrent@tornado</em:id>
+		<em:version>2.17</em:version>
+		<em:type>2</em:type>
+		<em:iconURL>chrome://s3torrent/skin/s3torrent48.png</em:iconURL>
+		<em:multiprocessCompatible>true</em:multiprocessCompatible>
+
+		<em:name>Torrent Tornado</em:name> 
+		<em:description>A Torrent Client for Mozilla, runs everywhere, created in pure JavaScript without binary software!</em:description> 
+		<em:creator>Oleksandr Popov</em:creator> 
+		<em:homepageURL>http://www.s3blog.org/</em:homepageURL> 
+		<em:optionsURL>chrome://s3torrent/content/settings.xul</em:optionsURL> 
+
+		<!-- Firefox -->
+		<em:targetApplication>
+			<Description>
+				<em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+				<em:minVersion>28.0</em:minVersion>
+				<em:maxVersion>51.*</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+
+		<!-- SeaMonkey -->
+		<em:targetApplication>
+			<Description>
+				<em:id>{92650c4d-4b8e-4d2a-b7eb-24ecf4f6b63a}</em:id>
+				<em:minVersion>2.25</em:minVersion>
+				<em:maxVersion>2.49</em:maxVersion>
+			</Description>
+		</em:targetApplication>
+
+	</Description>
+</RDF>

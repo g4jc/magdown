@@ -1,0 +1,188 @@
+<?xml version="1.0"?>
+<!DOCTYPE window SYSTEM "chrome://s3torrent/locale/s3torrent.dtd">
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://s3torrent/skin/s3torrent.css" type="text/css"?>
+<?xul-overlay href="chrome://global/content/globalOverlay.xul"?>
+<?xul-overlay href="chrome://global/content/editMenuOverlay.xul"?>
+
+<window xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" xmlns:xhtml="http://www.w3.org/1999/xhtml"
+	id="s3torrent_about" onload="s3torrent.init();" onunload="s3torrent.close();" disablefastfind="true" 
+	title="&title.label;"
+	onmousedown="s3torrent.action_draw_begin(event);" 
+	onmouseup="s3torrent.action_draw_end(event);"
+	onmousemove="s3torrent.action_draw_move(event);">
+
+	<xhtml:link id="s3torrent_shortcut_icon" rel="shortcut icon" href="chrome://s3torrent/skin/s3torrent16.png"/>
+
+	<script type="application/x-javascript" src="chrome://s3torrent/content/downloads_library.js"/>
+	<script type="application/javascript" src="chrome://global/content/contentAreaUtils.js"/>
+
+	<keyset id="mainKeyset">
+		<key id="s3torrent_key_select_all" key="A" modifiers="accel" oncommand="s3torrent.action('select_all');"/>
+		<key id="s3torrent_key_search" key="F" modifiers="accel" oncommand="document.getElementById('s3torrent_searchbox').focus();"/>
+		<key id="s3torrent_key_remove_history" keycode="VK_DELETE" oncommand="s3torrent.action('remove_history');"/>
+		<key id="s3torrent_key_delete_file" keycode="VK_DELETE" modifiers="accel" oncommand="s3torrent.action('delete_file');"/>
+	</keyset>
+	<popupset id="s3torrent_popupset">
+		<menupopup id="s3torrent_context"  onpopupshowing="return s3torrent.check_menupopup(event);">
+			<menuitem label_pre="&cmd.pause.label;" id="s3torrent_pause" oncommand="s3torrent.action('pause');"/>
+			<menuitem label_pre="&cmd.resume.label;" id="s3torrent_resume" oncommand="s3torrent.action('resume');"/>
+			<menuitem label_pre="&cmd.cancel.label;" id="s3torrent_cancel" oncommand="s3torrent.action('cancel');"/>
+			<menuitem label_pre="&cmd.retry.label;" id="s3torrent_retry" oncommand="s3torrent.action('retry');"/>
+			<menuitem label="&cmd.trackers.label;" id="s3torrent_trackers" oncommand="s3torrent.action('trackers');"/>
+			<menuseparator id="s3torrent_menuseparator_1"/>
+			<menuitem label_pre="&cmd.copyDownloadLink.label;" id="s3torrent_copy_link" oncommand="s3torrent.action('copy_link');"/>
+			<menuitem label_pre="&cmd.goToDownloadPage.label;" id="s3torrent_download_page" oncommand="s3torrent.action('download_page');"/>
+			<menuseparator id="s3torrent_menuseparator_2"/>
+			<menuitem label_pre="&cmd.removeFromHistory.label;" id="s3torrent_remove_history" key="s3torrent_key_remove_history" oncommand="s3torrent.action('remove_history');"/>
+			<menuitem label_pre="&cmd.delete.label;" id="s3torrent_delete_file" key="s3torrent_key_delete_file" oncommand="s3torrent.action('delete_file');"/>
+			<menuseparator id="s3torrent_menuseparator_3"/>
+			<menuitem label="&cmd.open.label;" id="s3torrent_open_file" default="true" oncommand="s3torrent.action('open_file');"/>
+			<menuitem label="&cmd.show.label;" id="s3torrent_show_dir" oncommand="s3torrent.action('show_dir');"/>
+			<menuitem label_pre="&cmd.save.metadata.label;" id="s3torrent_save_metadata" oncommand="s3torrent.action('save_metadata');"/>
+			<menuseparator id="s3torrent_menuseparator_4"/>
+			<menuitem label="&cmd.select.all.label;" id="s3torrent_select_all" oncommand="s3torrent.action('select_all');"/>
+		</menupopup>
+		<menupopup id="s3torrent_context_copy_info">
+			<menuitem label="&cmd.copy.label;" oncommand="s3torrent.torrent_info_copy(event);"/>
+		</menupopup>
+		<menupopup id="s3torrent_context_change_tracker" onpopupshowing="s3torrent.context_change_tracker_check(event);">
+			<menuitem label="&cmd.trackers.label;" id="s3torrent_context_trackers" oncommand="s3torrent.action('trackers');"/>
+		</menupopup>
+	</popupset>
+<vbox flex="1">
+	<toolbox id="download-toolbox">
+		<toolbar class="chromeclass-toolbar" id="s3torrent_toolbar" align="center">
+			<toolbarbutton id="s3torrent_button_settings" oncommand="s3torrent.settings();" tooltiptext="&settings.label;"/>
+			<button id="s3torrent_button_add_torrent" label="&add.new.torrent.label;" oncommand="s3torrent.utils.add_new_torrent();"/>
+			<button id="s3torrent_button_pause_all" label="&cmd.stop.all.label;" label_pre="&cmd.stop.all.label;" oncommand="s3torrent.action_all('pause');"/>
+			<button id="s3torrent_button_resume_all" label="&cmd.resume.all.label;" label_pre="&cmd.resume.all.label;" oncommand="s3torrent.action_all('resume');"/>
+			<button id="s3torrent_button_cancel_all" label="&cmd.cancel.all.label;" label_pre="&cmd.cancel.all.label;" oncommand="s3torrent.action_all('cancel');"/>
+			<button id="s3torrent_button_remove_all" label="&cmd.remove.all.label;" label_pre="&cmd.remove.all.label;" oncommand="s3torrent.action_all('remove_history_all_done');"/>
+			<spacer flex="2"/>
+			<label id="s3torrent_summary_progress_text" value=""/>
+			<progressmeter id="s3torrent_summary_progress" class="downloadProgress" min="0" max="100" value="0" mode="normal" flex="1"/>
+			<label id="s3torrent_summary_text" value=""/>
+			<textbox type="search" id="s3torrent_searchbox" minwidth="200" class="compact" oncommand="s3torrent.treeView.search(this.value);"/>
+		</toolbar>
+	</toolbox>
+	<tree id="s3torrent_tree" flex="1" hidecolumnpicker="false" class="plain" context="s3torrent_context" onkeyup="s3torrent.action_select(event);" enableColumnDrag="true" minheight="200" persist="height">
+		<treecols>
+			<treecol id="TorrentName" label="&downloadsLibrary.TorrentName.label;" flex="3" persist="width hidden ordinal sortActive sortDirection" class="sortDirectionIndicator"/>
+			<splitter class="tree-splitter"/>
+			<treecol id="SaveDir" label="&downloadsLibrary.SaveDir.label;" flex="3" persist="width hidden ordinal sortActive sortDirection"/>
+			<splitter class="tree-splitter"/>
+			<treecol id="FileSize" label="&downloadsLibrary.Size.label;" style="text-align: right" flex="2" persist="width hidden ordinal sortActive sortDirection"/>
+			<splitter class="tree-splitter"/>
+			<treecol id="Progress" label="&downloadsLibrary.Progress.label;" style="text-align: center" type="progressmeter" flex="2" persist="width hidden ordinal sortActive sortDirection"/>
+			<splitter class="tree-splitter"/>
+			<treecol id="ProgressPercent" label="&downloadsLibrary.Percent.label;" style="text-align: right" flex="1" persist="width hidden ordinal sortActive sortDirection"/>
+			<splitter class="tree-splitter"/>
+			<treecol id="Speed" label="&downloadsLibrary.Speed.label;" style="text-align: right" flex="1" persist="width hidden ordinal sortActive sortDirection"/>
+			<splitter class="tree-splitter"/>
+			<treecol id="TimeRemaining" label="&downloadsLibrary.TimeRemaining.label;" style="text-align: right" flex="1" persist="width hidden ordinal sortActive sortDirection"/>
+			<splitter class="tree-splitter"/>
+			<treecol id="Peer" label="&downloadsLibrary.Peers.label;" style="text-align: center" flex="1" persist="width hidden ordinal sortActive sortDirection"/>
+			<splitter class="tree-splitter"/>
+			<treecol id="DateTime" label="&downloadsLibrary.DateTime.label;" flex="1" persist="width hidden ordinal sortActive sortDirection"/>
+			<splitter class="tree-splitter"/>
+		</treecols>
+		<treechildren ondblclick="s3torrent.action_click_dbl(event);" onclick="s3torrent.action_click(event);"/>
+	</tree>
+
+	<splitter id="s3torrent_splitter" hidden="true" state="open" collapse="none"/>
+
+	<tabbox id="s3torrent_info" hidden="true" height="200" minheight="200" flex="1" persist="height">
+	<tabs>
+		<tab label="&downloadsLibrary.Info.label;"/>
+		<tab label="&downloadsLibrary.TorrentInfo.Files.label;"/>
+		<tab label="&downloadsLibrary.TorrentInfo.Trackers.label;"/>
+		<tab label="&downloadsLibrary.Peers.label;"/>
+	</tabs>
+	<tabpanels flex="1">
+		<tabpanel>
+			<listbox id="s3torrent_info_general_list" flex="1">
+				<listcols>
+					<listcol width="150"/>
+					<listcol flex="1" />
+				</listcols>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentName.label;"/><listcell label="" id="s3torrent_info_torrent_name"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.SaveDir.label;"/><listcell label="" is_link="true" id="s3torrent_info_save_dir"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.FilesCount.label;"/><listcell label="" id="s3torrent_info_files_count"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.Size.label;"/><listcell label="" id="s3torrent_info_total_size"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.Progress.label;"/><listcell label="" id="s3torrent_info_progress"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.Hash.label;"/><listcell label="" id="s3torrent_info_hash"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.MagnetLink.label;"/><listcell is_link="true" id="s3torrent_info_magnet_link"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.Error.label;"/><listcell id="s3torrent_info_error_text"/></listitem>
+				<listitem disabled="true"><listcell/><listcell/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.Publisher.label;"/><listcell label="" id="s3torrent_info_publisher"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.PublisherUrl.label;"/><listcell label="" is_link="true" id="s3torrent_info_publisher_url"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.Created.label;"/><listcell label="" id="s3torrent_info_created"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.Comment.label;"/><listcell label="" is_link_maybe="true" id="s3torrent_info_comment"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.DownloadPage.label;"/><listcell label="" is_link="true" id="s3torrent_info_download_page"/></listitem>
+				<listitem context="s3torrent_context_copy_info"><listcell label="&downloadsLibrary.TorrentInfo.DownloadLink.label;"/><listcell label="" is_link="true" id="s3torrent_info_download_link"/></listitem>
+			</listbox>
+		</tabpanel>
+		<tabpanel>
+			<vbox flex="1">
+			<listbox id="s3torrent_info_file_list" flex="1" onkeypress="s3torrent.torrent_info_keyup(event);">
+				<listhead>
+					<listheader label="&downloadsLibrary.TorrentInfo.FileName.label;" width="550"/>
+					<listheader label="&downloadsLibrary.Size.label;" width="150"/>
+					<listheader label="&downloadsLibrary.Percent.label;" width="50" style="text-align: right"/>
+					<listheader label=""/>
+				</listhead>
+				<listcols>
+					<listcol/>
+					<listcol/>
+					<listcol/>
+					<listcol flex="1" />
+				</listcols>
+			</listbox>
+			<hbox>
+				<checkbox oncommand="s3torrent.torrent_info_select_file_list_all(this.checked);" checked="true" label="&cmd.select.all.label;"/>
+				<spacer flex="1"/>
+				<label id="s3torrent_info_file_list_total_size" value=""/>
+			</hbox>
+			</vbox>
+		</tabpanel>
+		<tabpanel>
+			<listbox id="s3torrent_info_tracker_list" flex="1" context="s3torrent_context_change_tracker">
+				<listhead>
+					<listheader label="&downloadsLibrary.URL.label;"/>
+					<listheader label="&downloadsLibrary.Peers.label;"/>
+					<listheader label=""/>
+				</listhead>
+				<listcols>
+					<listcol width="350"/>
+					<listcol width="50"/>
+					<listcol flex="1" />
+				</listcols>
+			</listbox>
+		</tabpanel>
+		<tabpanel>
+			<listbox id="s3torrent_info_peer_list" flex="1">
+				<listhead>
+					<listheader label="&downloadsLibrary.TorrentInfo.Address.label;" width="150"/>
+					<listheader label="&downloadsLibrary.TorrentInfo.Client.label;" width="150"/>
+					<listheader label="&downloadsLibrary.Percent.label;" width="50" style="text-align: right"/>
+					<listheader label="&downloadsLibrary.Speed.label;" width="100"/>
+					<listheader label=""/>
+				</listhead>
+				<listcols>
+					<listcol/>
+					<listcol/>
+					<listcol/>
+					<listcol/>
+					<listcol flex="1" />
+				</listcols>
+			</listbox>
+		</tabpanel>
+	</tabpanels>
+	</tabbox>
+
+	<box id="s3torrent_draw_box" hidden="true">
+		<hbox id="s3torrent_draw_box_hbox"/>
+	</box>
+</vbox>
+</window>

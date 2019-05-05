@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://s3torrent/locale/s3torrent.dtd">
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://s3torrent/skin/s3torrent.css" type="text/css"?>
+
+<dialog title="&title.label; - &add.new.torrent.label;" id="s3torrent_add_new_dialog" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+	minheight="375" minwidth="450" 
+	buttons="extra2,extra1,cancel" 
+	onload="s3torrent.dialog_init();" 
+	onresize="s3torrent.onresize();" 
+	buttonlabelextra2="&new.torrent.skip.step.label;"
+	buttonlabelextra1="&new.torrent.skip.step.later.label;"
+	ondialogextra2="s3torrent.step_end(false);"
+	ondialogextra1="s3torrent.step_end(true);"
+	ondialogcancel="s3torrent.ondialogcancel();">
+
+	<script type="application/x-javascript" src="chrome://s3torrent/content/add_new_torrent.js"/>
+
+	<vbox id="s3torrent_step_1_box" flex="1">
+	<groupbox flex="1">
+		<vbox flex="1">
+		<radiogroup id="s3torrent_new_selector">
+			<vbox>
+			<radio label="&new.torrent.selector.url.label;" value="url"/>
+			<hbox style="padding-left: 20px;">
+				<textbox multiline="false" flex="1" onkeypress="s3torrent.check_enter(event);" rows="1" id="s3torrent_add_new_url"/>
+			</hbox>
+			<radio label="&new.torrent.selector.file.label;" value="file"/>
+			<hbox style="padding-left: 20px;" align="center">
+				<textbox disabled="true" id="s3torrent_add_new_file" flex="1"/>
+				<button label="&new.torrent.selector.file.open.label;" id="s3torrent_add_new_file_button" oncommand="s3torrent.open_file();"/>
+				<button label="&new.torrent.selector.file.list.label;" id="s3torrent_add_file_list_button" oncommand="s3torrent.open_file_list();"/>
+			</hbox>
+			</vbox>
+		</radiogroup>
+		<textbox id="s3torrent_add_new_magnet_log" multiline="true" flex="1" readonly="true" wrap="virtual" hidden="true"/>
+		</vbox>
+	</groupbox>
+	<hbox><spacer flex="1"/><button label="&new.torrent.next.step.label; (1/3)"  id="s3torrent_step_1_next" class="s3torrent_step_next" oncommand="s3torrent.step_1_next();"/></hbox>
+	</vbox>
+
+	<vbox id="s3torrent_step_2_box" hidden="true" flex="1">
+	<groupbox flex="1">
+		<caption label="&downloadsLibrary.Info.label;"/>
+		<listbox id="s3torrent_step_2_info_list" flex="1">
+			<listcols>
+				<listcol width="150"/>
+				<listcol flex="1" />
+			</listcols>
+			<listitem><listcell label="&downloadsLibrary.TorrentName.label;"/><listcell label="" id="s3torrent_info_torrent_name"/></listitem>
+			<listitem style="font-weight: bold; cursor: pointer;" ondblclick="s3torrent.select_dir_click();"><listcell label="&downloadsLibrary.SaveDir.label;"/><listcell label="" id="s3torrent_info_save_dir"/></listitem>
+			<listitem><listcell label="&downloadsLibrary.TorrentInfo.FilesCount.label;"/><listcell label="" id="s3torrent_info_files_count"/></listitem>
+			<listitem><listcell label="&downloadsLibrary.Size.label;"/><listcell label="" id="s3torrent_info_total_size"/></listitem>
+			<listitem><listcell label="&downloadsLibrary.TorrentInfo.Hash.label;"/><listcell label="" id="s3torrent_info_hash"/></listitem>
+			<listitem><listcell label="&downloadsLibrary.TorrentInfo.Publisher.label;"/><listcell label="" id="s3torrent_info_publisher"/></listitem>
+			<listitem><listcell label="&downloadsLibrary.TorrentInfo.PublisherUrl.label;"/><listcell label="" is_link="true" id="s3torrent_info_publisher_url"/></listitem>
+			<listitem><listcell label="&downloadsLibrary.TorrentInfo.Created.label;"/><listcell label="" id="s3torrent_info_created"/></listitem>
+			<listitem><listcell label="&downloadsLibrary.TorrentInfo.Comment.label;"/><listcell label="" is_link_maybe="true" id="s3torrent_info_comment"/></listitem>
+		</listbox>
+	</groupbox>
+	<hbox>
+		<button label="&new.torrent.prev.step.label;"  id="s3torrent_step_2_prev" oncommand="s3torrent.step_1();"/>
+		<spacer flex="1"/>
+		<button label="&new.torrent.next.step.label; (2/3)"  id="s3torrent_step_2_next" oncommand="s3torrent.step_2_next();" class="s3torrent_step_next"/>
+	</hbox>
+	</vbox>
+
+	<vbox id="s3torrent_step_3_box" hidden="true" flex="1">
+	<groupbox flex="1">
+		<caption label="&downloadsLibrary.TorrentInfo.Files.label;"/>
+		<vbox flex="1">
+		<listbox id="s3torrent_step_3_file_list" flex="1">
+			<listhead>
+				<listheader label="&downloadsLibrary.TorrentInfo.FileName.label;"/>
+				<listheader label="&downloadsLibrary.Size.label;"/>
+			</listhead>
+			<listcols>
+				<listcol flex="1"/>
+				<listcol width="100"/>
+			</listcols>
+		</listbox>
+		<hbox>
+			<checkbox oncommand="s3torrent.select_file_list_all(this.checked);" checked="true" label="&cmd.select.all.label;"/>
+			<spacer flex="1"/>
+			<label id="s3torrent_step_3_file_list_total_size" value=""/>
+		</hbox>
+		</vbox>
+	</groupbox>
+	<hbox>
+		<button label="&new.torrent.prev.step.label;"  id="s3torrent_step_3_prev" oncommand="s3torrent.step_2();"/>
+		<spacer flex="1"/>
+		<button label="&new.torrent.next.step.label; (3/3)"  id="s3torrent_step_3_next" oncommand="s3torrent.step_3_next();" class="s3torrent_step_next"/>
+	</hbox>
+	</vbox>
+	<hbox>
+		<button dlgtype="extra2"/>
+		<button dlgtype="extra1"/>
+		<spacer flex="1"/>
+		<button dlgtype="cancel"/>
+	</hbox>
+</dialog>

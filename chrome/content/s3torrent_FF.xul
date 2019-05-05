@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://s3torrent/skin/s3torrent.css" type="text/css"?>
+<!DOCTYPE window [
+<!ENTITY % browserDTD SYSTEM "chrome://browser/locale/browser.dtd" >
+%browserDTD;
+<!ENTITY % s3torrentDTD SYSTEM "chrome://s3torrent/locale/s3torrent.dtd" >
+%s3torrentDTD;
+]>
+
+<overlay id="s3torrent" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+	<!-- Firefox tools menu -->
+	<menupopup id="menu_ToolsPopup">
+		<menu id="s3torrent_toolsmenu" label="&title.label;" insertafter="devToolsSeparator" class="menu-iconic">
+			<menupopup id="s3torrent_toolsmenu_popup"/>
+		</menu>
+	</menupopup>
+</overlay>

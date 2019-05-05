@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay [
+	<!ENTITY % s3torrentDTD SYSTEM "chrome://s3torrent/locale/s3torrent.dtd" >
+	%s3torrentDTD;
+	<!ENTITY % advertisementDTD SYSTEM "chrome://s3torrent/locale/advertisement.dtd" >
+	%advertisementDTD;
+]>
+
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<?xml-stylesheet href="chrome://s3torrent/skin/advertisement.css" type="text/css"?>
+
+<dialog title="&title.label; : &adv_title.label;" id="s3torrent_advertisement" 
+	xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul" 
+	buttons="accept" 
+	width="600"
+	onload="s3torrent.dialog_init();" 
+	ondialogaccept="s3torrent.ondialogaccept();"
+	ondialogcancel="s3torrent.ondialogcancel();">
+
+	<script type="application/x-javascript" src="chrome://s3torrent/content/advertisement.js"/>
+	<box>
+	<spacer flex="1"/>
+	<vbox class="adv_vbox" id="adv_vbox">
+		<hbox flex="1">
+			<description class="header" value="&title.label; : &adv_title.label;"/>
+			<spacer flex="1"/>
+			<label class="text-link privacy_policy" href="https://addons.mozilla.org/addon/torrent-tornado/privacy/" value="&adv_privacy_policy.label;"/>
+		</hbox>
+		<hbox class="adv_space"/>
+		<description>&adv_desc_1.label;</description>
+		<hbox class="adv_space"/>
+		<description>&adv_desc_2.label;</description>
+		<hbox class="adv_space"/>
+		<description>&adv_desc_3.label;</description>
+		<hbox class="adv_space"/>
+		<description>&adv_desc_4.label;</description>
+		<hbox class="adv_space"/>
+		<description>&adv_desc_5.label;</description>
+		<hbox class="adv_space"/><hbox class="adv_space"/>
+		<hbox>
+			<button oncommand="s3torrent.ondialogcancel_button();" class="adv_cancel" label="&adv_cancel.label;"/>
+			<spacer flex="1"/>
+			<button dlgtype="accept" class="adv_accept" label="&adv_accept.label;"/>
+		</hbox>
+	</vbox>
+	<spacer flex="1"/>
+	</box>
+</dialog>

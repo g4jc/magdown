@@ -1,0 +1,19 @@
+<!ENTITY adv_title.label "Reklám">
+
+<!ENTITY adv_desc_1.label "Kedves barátaim és az én kiegészítőm használói a &quot;&title.label;&quot;, bővítménynek a fejlesztésére nagyon sok időt fordítottam: funkciók hozzáadása, hibák javítása, fejlesztések, nem is beszélve a felhasználók különböző kéréseinek a megvalósításáról.">
+<!ENTITY adv_desc_2.label "Az én bővítményem tudja támogatni szabadon választható hirdetésekkel, amik hozzáadódnak azokhoz az internetes oldalakhoz, amiket meglátogat. Ez a nem kötelező reklám kiegészítő jövedelmet biztosít,ami által lehetőségem nyílik ezen és más projektek további fejlesztésére.">
+<!ENTITY adv_desc_3.label "A reklám csak a HTTP -re vonatkozik. A hírdetés mindig tíltva van a HTTPS (banki oldalakon, Facebook-on, Gmail-en, stb.). A reklám mindig le van tiltva a Privát Böngészési mód használatakor.">
+<!ENTITY adv_desc_4.label "Engedélyezheti vagy letilthatja a reklámokat, most (vagy később:a Beállítások ...-Reklámok fül-nél).Bármikor ki lehet kapcsolni,ha nem tetszik,csak kattintson &quot;?&quot;minden hirdetés sarkában gombra.">
+<!ENTITY adv_desc_5.label "Köszönöm a támogatást és az Ön döntését!">
+
+<!ENTITY adv_privacy_policy.label "Adatvédelmi irányelvek">
+<!ENTITY adv_cancel.label "Nem, nem akarom reklámokkal a munkát támogatni">
+<!ENTITY adv_accept.label "Igen teljes mértékben támogatom a fejlesztőt">
+
+<!ENTITY adv_is_enabled.label "Reklám engedélyezve">
+<!ENTITY adv_is_disabled.label "Reklám ki van kapcsolva">
+<!ENTITY adv_customization.label "A megjelenő reklám testreszabása">
+<!ENTITY adv_change_status.label "Állapot módosítása">
+
+<!ENTITY adv_offer_discount_1.label "Szeretne több mint 100 vezető online kiskereskedőnél kapni árengedményeket és ingyenes utalványokat?">
+<!ENTITY adv_offer_discount_2.label "Javasolt hirdetések - az oldal tetején látható kicsi tippek a friss árengedményekről szólnak bizonyos boltoknál ,amelyeket meglátogat.">

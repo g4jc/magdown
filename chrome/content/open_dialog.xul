@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<!DOCTYPE overlay SYSTEM "chrome://s3torrent/locale/s3torrent.dtd">
+<overlay id="s3torrent_open_dialog" xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+		
+	<script type="application/x-javascript" src="chrome://s3torrent/content/open_dialog.js"/>
+	<radiogroup id="mode">
+		<hbox insertbefore="save" flex="1">
+			<radio id="s3torrent_open" label="&title.label;" flex="1" />
+		</hbox>
+	</radiogroup>	
+
+</overlay>
